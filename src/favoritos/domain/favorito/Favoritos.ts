@@ -1,7 +1,8 @@
-import AbstractProducto from './AbstractTypes/AbstractFavoritos';
+import AbstractFavoritos from './AbstractTypes/AbstractFavoritos';
 
 
-export class Usuario extends AbstractProducto {
+
+export class Favorito extends AbstractFavoritos{
   public isNull = (): boolean => {
     return false; // Este objeto no es nulo.
   };

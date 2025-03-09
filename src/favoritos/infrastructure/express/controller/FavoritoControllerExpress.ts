@@ -12,89 +12,74 @@ export default class FavoritoControllerExpress
 
   ) {}
 
-  private extractToken(req: Request): string | null {
-    const token = req.headers.authorization;
-    return token ? token.replace('Bearer ', '') : null;
-  }
 
   public getFavoritosUser = async (req: Request, res: Response): Promise<void> => {
     try {
-      const token = this.extractToken(req);
-      if (!token) {
-        res.status(401).json({ message: 'Unauthorized' });
+      const { idUsuario } = req.params;
+      if (!idUsuario) {
+        res.status(400).json({ message: 'Bad Request: idUsuario is required' });
         return;
       }
-      const favoritos = this.favoritosDriver.getfavoritos(token);
-      res.status(200).json({ favoritos });
-    } catch (error) {
-      res.status(500).json({ message: 'Internal Server Error', error });
+      const favoritos = await this.favoritosDriver.getfavoritos(idUsuario);
+      if (favoritos === null || favoritos === undefined) {
+        res.status(404).send("No hay productos en la lista de favoritos.");
+        return;
+      }
+      res.status(200).json(favoritos);
+    } catch (error: unknown) {
+      console.error("Error en obtenerFavoritos:", error);
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Error desconocido" });
+      }
     }
   }
 
   public deleteFavoritoUse = async (req: Request, res: Response): Promise<void> => {
     try {
-      const token = this.extractToken(req);
-      const productoId = req.params['id'];
-      if (!token || !productoId) {
-        res.status(400).json({ message: 'Bad Request' });
+      const { idUsuario, idProducto } = req.body;
+      if (!idUsuario || !idProducto) {
+        res.status(400).json({ message: 'Bad Request: idUsuario and idProducto are required' });
         return;
       }
-
-      const success = this.favoritosDriver.deleteProductoFavoritos(token, Number(productoId));
+      const success = await this.favoritosDriver.deleteProductoFavoritos(idUsuario, Number(idProducto));
       if (success) {
         res.status(200).json({ message: 'Producto removed from favoritos' });
       } else {
         res.status(404).json({ message: 'Producto not found in favoritos' });
       }
-    } catch (error) {
-      res.status(500).json({ message: 'Internal Server Error', error });
+    } catch (error: unknown) {
+      console.error("Error en quitarProductoDeFavoritos:", error);
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Error desconocido" });
+      }
     }
   }
 
   public addFavoritoUse = async (req: Request, res: Response): Promise<void> => {
     try {
-      const token = this.extractToken(req);
-      const producto: Producto = req.body;
-      if (!token || !producto) {
-        res.status(400).json({ message: 'Bad Request' });
+      const { idUsuario, idProducto } = req.body;
+      if (!idUsuario || !idProducto) {
+        res.status(400).json({ message: 'Bad Request: idUsuario and idProducto are required' });
         return;
-      }
-      const success = this.favoritosDriver.addProdcutoFavoritos(token, producto);
+      }; 
+      const success = await this.favoritosDriver.addProdcutoFavoritos(idUsuario, Number(idProducto));
       if (success) {
         res.status(201).json({ message: 'Producto added to favoritos' });
       } else {
         res.status(409).json({ message: 'Producto already in favoritos' });
       }
-    } catch (error) {
-      res.status(500).json({ message: 'Internal Server Error', error });
+    } catch (error: unknown) {
+      console.error("Error en agregarAFavoritos:", error);
+      if (error instanceof Error) {
+        res.status(500).json({ error: error.message });
+      } else {
+        res.status(500).json({ error: "Error desconocido" });
+      }
     }
   }
 
-
-  public getMovies = (_req: Request, res: Response): void => {
-    const movies = this.movieUseCase.getMovies()
-    const movies_json = MovieToJson.get(movies)
-
-    if(movies_json.length === 0) {
-      res.status(404).json({ message: 'Movies not found' })
-    }
-
-    res.status(200).json({movies: movies_json})
-  }
-
-  public getMovieById = (req: Request, res: Response): void => {
-    const id = req.params['id']
-    if(!id){
-      res.status(404).json({ message: 'idNoVaid' })
-    }
-    const idNumber = Number(id)
-    const moviesById = this.movieUseCaseById.getMoviesById(idNumber.);
-    const movies_json = MovieToJson.get([moviesById])
-
-    if(movies_json.length === 0) {
-      res.status(404).json({ message: 'Movies not found' })
-    }
-
-    res.status(200).json({movies: movies_json})
-  }
 }

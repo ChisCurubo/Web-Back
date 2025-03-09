@@ -2,8 +2,6 @@
 import { Rol } from '../../domain/roles/Rol';
 import { Usuario } from '../../../usuario/domain/usuario/Usuario';
 import { Permiso } from '../../domain/roles/Permiso';
-
-
 import AuthRepositoryInterface from '../../domain/port/driven/auth/AuthRepository';
 import AuthRolPermisoRepositoryInterface from '../../domain/port/driven/auth/AuthRolPermisoRepository';
 import AuthRepoInterface from '../../../mysql/domain/repository/AuthRepoInterface';

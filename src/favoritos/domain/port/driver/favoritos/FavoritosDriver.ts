@@ -1,11 +1,8 @@
-import { Producto } from "../../../../../producto/domain/producto/Producto"
-import { Favoritos } from "../../../favorito/interface/FavoritosInterface"
-
-
+import { Favorito } from "../../../favorito/Favoritos"
 
 
 export default interface FavoritosDriverPort{
-    getfavoritos(token:string ):Favoritos[]
-    addProdcutoFavoritos(token:string , producto:number): boolean 
-    deleteProductoFavoritos(token:string , producto:Producto):boolean
+    getfavoritos(token:string ): Promise<Favorito>
+    addProdcutoFavoritos(token:string , producto:number): Promise<boolean> 
+    deleteProductoFavoritos(token:string , producto:number):Promise<boolean>
 }
