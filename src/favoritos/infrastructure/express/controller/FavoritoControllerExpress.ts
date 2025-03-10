@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import FavoritoControllerExpressInterface from '../../../domain/interfaces/FavoritoControllerExpressInterface'
 import FavoritosDriverPort from '../../../domain/port/driver/favoritos/FavoritosDriver'
-import { Producto } from '../../../../producto/domain/producto/Producto';
+
 
 
 export default class FavoritoControllerExpress

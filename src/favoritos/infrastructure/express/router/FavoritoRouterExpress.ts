@@ -11,7 +11,7 @@ export default class FavoritoRouterExpress implements FavoritoRouterExpressInter
     private readonly movieController: FavoritoControllerExpressInterface
   ) {
     this.router = Router()
-    this.path = '/movies/v1.0'
+    this.path = '/favorito/v1.0'
     this.routes()
   }
   public routes = (): void => {
@@ -21,15 +21,15 @@ export default class FavoritoRouterExpress implements FavoritoRouterExpressInter
   }
 
   configureGetFavoritos = (): void => {
-    this.router.get('/favoritos', this.movieController.getFavoritosUser.bind(this.movieController))
+    this.router.get('/favoritos/:idUsuario', this.movieController.getFavoritosUser.bind(this.movieController))
   }
 
   configureAddFavoritos = (): void => {
-    this.router.post('/favoritos', this.movieController.addFavoritoUse.bind(this.movieController))
+    this.router.post('/addfavoritos', this.movieController.addFavoritoUse.bind(this.movieController))
   }
 
   configureDeleteFavoritos = (): void => {
-    this.router.delete('/favoritos/:id', this.movieController.deleteFavoritoUse.bind(this.movieController))
+    this.router.delete('/delfavoritos/:id', this.movieController.deleteFavoritoUse.bind(this.movieController))
   }
 
 
