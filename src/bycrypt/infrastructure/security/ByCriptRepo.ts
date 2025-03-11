@@ -11,7 +11,7 @@ export default class ByCriptRepo implements BycriptInterface{
     /**
      * @property {number} RAMDOM_STATE - A static constant used as the salt rounds for hashing.
      */
-    private static readonly RAMDOM_STATE = 42;
+    private static readonly RAMDOM_STATE = 10;
 
     /**
      * @property {number} RAMDOM_STATE - A static constant used as the salt rounds for hashing.

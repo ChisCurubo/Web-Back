@@ -30,7 +30,7 @@ export default class UserRepositoryInfraestructure implements UsuarioRepositoryP
     
       public findById = async (id: string): Promise<Usuario> => {
         const usuario = await this.mysqlUsuario.fetchUsuarioByCi(id);
-    
+        
         if (!usuario) {
           return Promise.resolve(new NullUsuario());
         }
@@ -73,7 +73,7 @@ export default class UserRepositoryInfraestructure implements UsuarioRepositoryP
     
       public getUsuarioByEmail = async (email: string): Promise<Usuario> => {
         const usuario = await this.mysqlUsuario.fetchUsuarioByEmail(email);
-    
+        
         if (!usuario) {
           return Promise.resolve(new NullUsuario());
         }

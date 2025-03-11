@@ -11,7 +11,7 @@ import JWTUser from '../../domain/interfaces/JwtUser';
 export default class JwtRepo implements JwtInterface {
     private readonly secretKey: string;
 
-    private constructor() {
+    constructor() {
         this.secretKey = JWTProvider.getSECRET_KEY();
     }
 

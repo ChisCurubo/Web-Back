@@ -24,12 +24,12 @@ export default class MysqlUsuarioRepository implements UsuarioRepoInterface {
 
   public fetchUsuarioByCi = async (ci: string): Promise<MysqlUsuario > => {
     const rows = await this.db.executeQuery(
-      `SELECT ci, nombreUsuario, apellidoUsuario, correoUsuario, 
+      `SELECT ci, nombreUsuario, apellidoUsuario, correoUsuario, contrasenaUsuario,
               IF(estadoUsuario = 1, TRUE, FALSE) AS estadoUsuario, rol_id
        FROM BuenaVista_Usuarios WHERE ci = ?`,
       [ci]
     );
-
+    console.log(rows[0])
     if (!rows || rows.length === 0) {
         return Promise.reject(new Error('no data found'));
     }
@@ -39,7 +39,7 @@ export default class MysqlUsuarioRepository implements UsuarioRepoInterface {
 
   public fetchUsuarioByEmail = async (email: string): Promise<MysqlUsuario > => {
     const rows = await this.db.executeQuery(
-      `SELECT ci, nombreUsuario, apellidoUsuario, correoUsuario, 
+      `SELECT ci, nombreUsuario, apellidoUsuario, correoUsuario, contrasenaUsuario, 
               IF(estadoUsuario = 1, TRUE, FALSE) AS estadoUsuario, rol_id
        FROM BuenaVista_Usuarios WHERE correoUsuario = ?`,
       [email]

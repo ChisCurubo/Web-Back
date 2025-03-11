@@ -7,22 +7,29 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
     private readonly db = Database.getInstance();
     async getCarrito(token: string): Promise<MYSQLItemCarrito[]> {
         try {
-            const [result]: any = await this.db.executeQuery(
-                `SELECT * FROM BuenaVista_Carrito WHERE usuario_id = ? AND estadoCarrito = 1`,
+            const result: any = await this.db.executeQuery(
+                `SELECT ic.* 
+                 FROM BuenaVista_Carrito bc
+                 JOIN itemCarrito ic ON bc.idCarrito = ic.idCarrito
+                 WHERE bc.usuario_id = ? AND bc.estadoCarrito = 1`,
                 [token]
             );
-
-            if (!result || result.length === 0) {
-                console.warn("No se encontró un carrito activo.");
-                return result as MYSQLItemCarrito[];
+    
+            console.log("Resultado de la consulta SQL:", JSON.stringify(result, null, 2));
+    
+            if (!Array.isArray(result) || result.length === 0) {
+                console.warn("No se encontraron items en el carrito activo.");
+                return [];
             }
-
+    
             return result as MYSQLItemCarrito[];
         } catch (error) {
-            console.error("Error al obtener el carrito:", error);
+            console.error("Error al obtener los items del carrito:", error);
             return [];
         }
     }
+    
+    
 
     async addProductoCarrito(token: string, producto: number): Promise<boolean> {
         try {
@@ -98,6 +105,7 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
                 return {
                     idItem: 0,
                     idProducto: 0,
+                    cantidad:0,
                     idCarrito: 0,
                     subTotal: 0
                 };
@@ -110,6 +118,7 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
             return {
                 idItem: 0,
                 idProducto: 0,
+                cantidad:0,
                 idCarrito: 0,
                 subTotal: 0
             };

@@ -1,16 +1,18 @@
-import { Carrito } from "../../domain/carrito/Carrito";
 import { ItemCarrito } from "../../domain/carrito/ItemCarrito";
 import CarritoRepositoryInterface from "../../domain/port/driven/CarritoRepositoryInterface";
 import CarritoServiceInterface from "../../domain/interfaces/CarritoServiceInterface";
+import JwtInterface from "../../../jwt/domain/interfaces/JwtokenInterface";
 
 export default class CarritoService implements CarritoServiceInterface {
     constructor(
-        private readonly carritoRepositoryInterface: CarritoRepositoryInterface
+        private readonly carritoRepositoryInterface: CarritoRepositoryInterface,
+        private readonly jwtToken : JwtInterface
     ) {}
 
     async getCarrito(token: string): Promise<ItemCarrito[]> {
         try {
-            return await this.carritoRepositoryInterface.getCarrito(token);
+            const idUser = this.jwtToken.decodeToken(token)
+            return await this.carritoRepositoryInterface.getCarrito(idUser.ci);
         } catch (error) {
             console.error(`Error al obtener el carrito: ${error}`);
             const err = error as Error;
@@ -21,7 +23,8 @@ export default class CarritoService implements CarritoServiceInterface {
 
     async addProductoCarrito(token: string, producto: number): Promise<boolean> {
         try {
-            return await this.carritoRepositoryInterface.addProductoCarrito(token, producto);
+            const idUser = this.jwtToken.decodeToken(token)
+            return await this.carritoRepositoryInterface.addProductoCarrito(idUser.ci, producto);
         } catch (error) {
             console.error(`Error al añadir producto al carrito: ${error}`);
             const err = error as Error;
@@ -31,7 +34,8 @@ export default class CarritoService implements CarritoServiceInterface {
 
     async deleteProductoCarrito(token: string, producto: number): Promise<boolean> {
         try {
-            return await this.carritoRepositoryInterface.deleteProductoCarrito(token, producto);
+            const idUser = this.jwtToken.decodeToken(token)
+            return await this.carritoRepositoryInterface.deleteProductoCarrito(idUser.ci, producto);
         } catch (error) {
             console.error(`Error al eliminar producto del carrito: ${error}`);
             const err = error as Error;
@@ -41,7 +45,8 @@ export default class CarritoService implements CarritoServiceInterface {
 
     async changeStatusCarrito(token: string): Promise<boolean> {
         try {
-            return await this.carritoRepositoryInterface.changeStatusCarrito(token);
+            const idUser = this.jwtToken.decodeToken(token)
+            return await this.carritoRepositoryInterface.changeStatusCarrito(idUser.ci);
         } catch (error) {
             console.error(`Error al cambiar el estado del carrito: ${error}`);
             const err = error as Error;
@@ -51,7 +56,8 @@ export default class CarritoService implements CarritoServiceInterface {
 
     async getTotalCarrito(token: string): Promise<number> {
         try {
-            return await this.carritoRepositoryInterface.getTotalCarrito(token);
+            const idUser = this.jwtToken.decodeToken(token)
+            return await this.carritoRepositoryInterface.getTotalCarrito(idUser.ci);
         } catch (error) {
             console.error(`Error al obtener el total del carrito: ${error}`);
             const err = error as Error;
@@ -71,7 +77,8 @@ export default class CarritoService implements CarritoServiceInterface {
 
     async createCarrito(token: string): Promise<boolean> {
         try {
-            return await this.carritoRepositoryInterface.createCarrito(token);
+            const idUser = this.jwtToken.decodeToken(token)
+            return await this.carritoRepositoryInterface.createCarrito(idUser.ci);
         } catch (error) {
             console.error(`Error al crear el carrito: ${error}`);
             const err = error as Error;
@@ -81,7 +88,8 @@ export default class CarritoService implements CarritoServiceInterface {
 
     async aumentaCanitadItemProductoCarrito(token: string, producto: number): Promise<boolean> {
         try {
-            return await this.carritoRepositoryInterface.aumentaCanitadItemProductoCarrito(token, producto);
+            const idUser = this.jwtToken.decodeToken(token)
+            return await this.carritoRepositoryInterface.aumentaCanitadItemProductoCarrito(idUser.ci, producto);
         } catch (error) {
             console.error(`Error al aumentar la cantidad del producto en el carrito: ${error}`);
             const err = error as Error;
@@ -91,7 +99,8 @@ export default class CarritoService implements CarritoServiceInterface {
 
     async disminuyeCantidadItemProductoCarrito(token: string, producto: number): Promise<boolean> {
         try {
-            return await this.carritoRepositoryInterface.disminuyeCantidadItemProductoCarrito(token,producto);
+            const idUser = this.jwtToken.decodeToken(token)
+            return await this.carritoRepositoryInterface.disminuyeCantidadItemProductoCarrito(idUser.ci,producto);
         } catch (error) {
             console.error(`Error al disminuir la cantidad del producto en el carrito: ${error}`);
             const err = error as Error;

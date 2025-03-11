@@ -1,13 +1,14 @@
 import { Request, Response } from 'express'
 import AuthControllerExpressInterface from '../../../domain/interfaces/AuthControllerExpressInterface'
-import AuthUseCase from '../../../application/usecase/AuthUseCase';
+
 import AuthRolesPermisoUseCase from '../../../application/usecase/AuthRolesPermisoUseCase';
+import AuthDriverPort from '../../../domain/port/driver/auth/AuthUsuario';
 
 export default class AuthControllerExpress
   implements AuthControllerExpressInterface {
 
     constructor(
-      private readonly authUseCase: AuthUseCase,
+      private readonly authUseCase: AuthDriverPort,
       private readonly authRolPermisoUsecase: AuthRolesPermisoUseCase,
     ) {}
 
@@ -113,12 +114,14 @@ export default class AuthControllerExpress
     public login = async (req: Request, res: Response): Promise<void> => {
       try {
         const { email, password } = req.body;
+        
         const token = await this.authUseCase.login(email, password);
-  
+
         if (token === null || token === undefined) {
           res.status(401).json({ message: "Invalid credentials" });
           return Promise.resolve();;
         }
+    
   
         res.status(200).json({ token });
       } catch (error) {

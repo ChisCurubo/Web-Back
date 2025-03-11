@@ -10,5 +10,6 @@ export default interface AuthRepositoryInterface{
     logout(token: string): Promise<boolean> 
     detokenize(token: string): Promise<Usuario>
     verifyPermitions(token: string): Promise<boolean> 
-    changeUserRoles(token: string, email: string, nameRol: string): Promise<boolean> 
+    changeUserRoles(token: string, email: string, nameRol: string): Promise<boolean>
+    comparePasswords(password: string, hashedPassword: string): Promise<boolean>; 
 }

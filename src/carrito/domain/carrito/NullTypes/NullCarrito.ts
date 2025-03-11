@@ -1,15 +1,17 @@
 import AbstractCarrito from "../AbstractTypes/AbstractCarrito";
 import AbstractCarritoProducto from "../AbstractTypes/AbstraItemCarrito";
 import NullCarritoProducto from "./NullItemCarrito";
+import NullUsuario from "../../../../usuario/domain/usuario/NullTypes/NullUsuario";
+import AbstractUsuario from "../../../../usuario/domain/usuario/AbstractTypes/AbstractUsuario";
 
 export default class NullCarrito extends AbstractCarrito {
   constructor() {
     super({
       idCarrito: 0,
-      carritoProducto: new NullCarritoProducto(),
+      carritoProducto: [new NullCarritoProducto()],
       totalCarrito: 0,
       statusCarrito: false,
-      fechaCarrito: new Date(),
+      usuario: new NullUsuario()
     });
   }
 
@@ -33,12 +35,11 @@ export default class NullCarrito extends AbstractCarrito {
     return;
   };
 
-  public override setFechaCarrito = (_hora: Date): void => {
+  public override setUsuario = (_usuario: AbstractUsuario): void => {
     return;
   };
 
-  public override setCarritoProducto(_carritoProducto: AbstractCarritoProducto): void {
-      return
+  public override setCarritoProducto(_carritoProducto: AbstractCarritoProducto[]): void {
+    return;
   }
-
 }

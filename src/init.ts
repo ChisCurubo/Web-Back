@@ -1,4 +1,5 @@
 import AuthRouterFactory from './auth/infrastructure/express/factory/AuthRouterFactory'
+import CarritoRouterFactory from './carrito/infrastructure/express/factory/CarritoRouterFactory'
 import ServerFactory from './express/infrastructure/factory/ServerFactory'
 import FavoritoRouterFactory from './favoritos/infrastructure/express/factory/FavoritoRouterFactory'
 import MovieRouterFactory from './movies/infrastructure/express/factory/MovieRouterFactory'
@@ -10,8 +11,9 @@ const usuarioRouter = UsuarioRouterFactory.create()
 const authRouter = AuthRouterFactory.create()
 const productoRouter = ProductoRouterFactory.create()
 const favoritoRouter = FavoritoRouterFactory.create()
+const carritoRouter = CarritoRouterFactory.create()
 
-const routes = [movieRouter, usuarioRouter, authRouter, productoRouter,favoritoRouter]
+const routes = [movieRouter, usuarioRouter, authRouter, productoRouter,favoritoRouter,carritoRouter]
 
 const server = ServerFactory.create(routes)
 server.initDB()

@@ -1,19 +1,31 @@
+import UsuarioRepositoryPort from "../../../usuario/domain/port/driven/UsuarioRepositoryPort";
+import NullUsuario from "../../../usuario/domain/usuario/NullTypes/NullUsuario";
 import { Usuario } from "../../../usuario/domain/usuario/Usuario"
+
 import AuthServiceInterface from "../../domain/interfaces/AuthServiceInterface"
 import AuthRepositoryInterface from "../../domain/port/driven/auth/AuthRepository";
 
 
 export default class AuthService implements AuthServiceInterface {
   constructor(
-    private readonly authRepository: AuthRepositoryInterface) {}
+    private readonly authRepository: AuthRepositoryInterface,
+    private readonly userRepository: UsuarioRepositoryPort
+  ) { }
 
-    async login(usuario: string, pwd: string): Promise<string> {
-    const token = await this.authRepository.login(usuario, pwd);
-    if (!token) {
-      throw new Error("Invalid credentials");
+  async login(usuario: string, pwd: string): Promise<Usuario> {
+    const userData = await this.userRepository.getUsuarioByEmail(usuario)
+    
+
+    if (userData === undefined || userData === null) {
+      return Promise.resolve(new NullUsuario());
     }
-    return token;
-  }
+
+    const isPasswordCorrect = await this.authRepository.comparePasswords(pwd, userData.getContrasenaUsuario())
+    if (!isPasswordCorrect) {
+      return Promise.resolve(new NullUsuario());
+    }
+    return Promise.resolve(userData);
+  };
 
   async register(usuario: Usuario): Promise<boolean> {
     const token = await this.authRepository.register(usuario);

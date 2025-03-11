@@ -4,7 +4,7 @@ import AbstractCarritoProducto from "../AbstractTypes/AbstraItemCarrito";
 
 export interface Carrito {
   idCarrito: number;
-  carritoProducto: AbstractCarritoProducto;
+  carritoProducto: AbstractCarritoProducto[];
   usuario : AbstractUsuario
   statusCarrito: boolean;
   totalCarrito: number;

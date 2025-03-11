@@ -6,7 +6,7 @@ import AbstractCarritoProducto from "./AbstraItemCarrito";
 export default abstract class AbstractCarrito {
   protected idCarrito: number;
   protected statusCarrito: boolean;
-  protected carritoProducto: AbstractCarritoProducto;
+  protected carritoProducto: AbstractCarritoProducto[];
   protected usuario : AbstractUsuario
   protected totalCarrito: number;
 
@@ -34,7 +34,7 @@ export default abstract class AbstractCarrito {
     return this.statusCarrito;
   }
 
-  public getCarritoProducto(): AbstractCarritoProducto {
+  public getCarritoProducto(): AbstractCarritoProducto[] {
     return this.carritoProducto;
   }
 
@@ -61,7 +61,7 @@ export default abstract class AbstractCarrito {
     this.statusCarrito = status;
   }
 
-  public setCarritoProducto(carritoProducto: AbstractCarritoProducto): void {
+  public setCarritoProducto(carritoProducto: AbstractCarritoProducto[]): void {
     this.carritoProducto = (carritoProducto);
   }
 

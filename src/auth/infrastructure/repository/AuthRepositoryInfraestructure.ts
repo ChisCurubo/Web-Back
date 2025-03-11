@@ -8,6 +8,7 @@ import AuthRepoInterface from '../../../mysql/domain/repository/AuthRepoInterfac
 import MysqlUsuariosToUsuarios from '../../../usuario/infrastructure/repository/UsuarioToUsuario';
 import MysqlRolesToRoles from './RolToRol';
 import MysqlPermisosToPermisos from './PermisoToPermiso';
+import BycriptInterface from '../../../bycrypt/domain/interfaces/BycriptInterface';
 
 export default class AuthRepositoryInfraestructure implements AuthRepositoryInterface, AuthRolPermisoRepositoryInterface {
 
@@ -15,8 +16,13 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
         private readonly mysqlUsuario: AuthRepoInterface,
         private readonly usuarioToUsuario: MysqlUsuariosToUsuarios,
         private readonly rolesToRoles : MysqlRolesToRoles,
-        private readonly permisotopermiso : MysqlPermisosToPermisos
+        private readonly permisotopermiso : MysqlPermisosToPermisos,
+        private readonly bycriptInterface : BycriptInterface
     ) {}
+    async comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
+
+        return Promise.resolve(await this.bycriptInterface.comparetPwd(password, hashedPassword));
+    }
    
     async login(usuario: string, pwd: string): Promise<string> {
         return await this.mysqlUsuario.login(usuario, pwd);
