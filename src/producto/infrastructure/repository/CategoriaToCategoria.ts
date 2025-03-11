@@ -1,4 +1,4 @@
-import { MysqlCategoria } from "../../../mysql/domain/repository/producto/MySQLCategoria";
+import { MysqlCategoria } from "../../../mysql/domain/producto/MySQLCategoria";
 import MysqlCategoriaRepository from "../../../mysql/infrastructure/db/ProductoSQL/MysqlCategoria";
 import { Categoria } from "../../domain/categoria/Categoria";
 import MysqlTipoProductoToTipoProducto from "./TipoProdutoToTipoProducto";

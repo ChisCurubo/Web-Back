@@ -1,4 +1,4 @@
-import { MysqlProducto } from "./producto/MySQLProducto";
+import { MysqlProducto } from "../producto/MySQLProducto";
 
 
 export default interface ProductoRepoInterface {

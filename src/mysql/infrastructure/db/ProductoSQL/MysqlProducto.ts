@@ -1,4 +1,4 @@
-import { MysqlProducto } from "../../../domain/repository/producto/MySQLProducto";
+import { MysqlProducto } from "../../../domain/producto/MySQLProducto";
 import ProductoRepoInterface from "../../../domain/repository/ProductoRepoInterface";
 import Database from "../database";
 

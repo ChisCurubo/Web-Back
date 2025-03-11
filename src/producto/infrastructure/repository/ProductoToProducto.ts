@@ -1,4 +1,4 @@
-import { MysqlProducto } from "../../../mysql/domain/repository/producto/MySQLProducto";
+import { MysqlProducto } from "../../../mysql/domain/producto/MySQLProducto";
 import MysqlCategoriaRepository from "../../../mysql/infrastructure/db/ProductoSQL/MysqlCategoria";
 import MysqlDescuentoRepository from "../../../mysql/infrastructure/db/ProductoSQL/MysqlDescuento";
 import NullCategoria from "../../domain/categoria/NullTypes/NullCategoria";

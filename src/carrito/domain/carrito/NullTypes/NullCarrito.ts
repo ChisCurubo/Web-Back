@@ -1,6 +1,6 @@
 import AbstractCarrito from "../AbstractTypes/AbstractCarrito";
-import AbstractCarritoProducto from "../AbstractTypes/AbstractCarritoProducto";
-import NullCarritoProducto from "./NullCarritoProducto";
+import AbstractCarritoProducto from "../AbstractTypes/AbstraItemCarrito";
+import NullCarritoProducto from "./NullItemCarrito";
 
 export default class NullCarrito extends AbstractCarrito {
   constructor() {

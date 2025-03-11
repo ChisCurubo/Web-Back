@@ -1,4 +1,4 @@
-import { MysqlDescuento } from "./producto/MySQLDescuento";
+import { MysqlDescuento } from "../producto/MySQLDescuento";
 
 
 export default interface DescuentoRepoInterface {

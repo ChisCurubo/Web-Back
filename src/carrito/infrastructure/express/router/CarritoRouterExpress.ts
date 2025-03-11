@@ -43,15 +43,6 @@ export default class CarritoRouterExpress implements CarritoRouterExpressInterfa
     )
 
     /**
-     * GET /carrito/:id
-     * Retrieves a specific shopping cart by its ID
-     */
-    this.router.get(
-      '/carrito/:id',
-      this.carritoController.getCarritoByIdCarrito.bind(this.carritoController)
-    )
-
-    /**
      * POST /carrito/create
      * Creates a new shopping cart for the user
      */
@@ -95,15 +86,6 @@ export default class CarritoRouterExpress implements CarritoRouterExpressInterfa
     this.router.delete(
       '/carrito/items/remove/:itemId',
       this.carritoController.deleteItemFromCarrito.bind(this.carritoController)
-    )
-
-    /**
-     * DELETE /carrito/delete
-     * Deletes the entire shopping cart
-     */
-    this.router.delete(
-      '/carrito/delete',
-      this.carritoController.deleteCarrito.bind(this.carritoController)
     )
 
     /**

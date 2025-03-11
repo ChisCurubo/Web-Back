@@ -1,4 +1,4 @@
-import { MysqlDescuento } from "../../../mysql/domain/repository/producto/MySQLDescuento";
+import { MysqlDescuento } from "../../../mysql/domain/producto/MySQLDescuento";
 import { Descuento } from "../../domain/descuento/Descuento";
 import NullDescuento from "../../domain/descuento/NullTypes/NullDescuento";
 

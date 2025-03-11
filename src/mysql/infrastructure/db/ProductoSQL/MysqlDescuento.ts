@@ -1,5 +1,5 @@
 import DescuentoRepoInterface from "../../../domain/repository/DescuentoRepoInterface";
-import { MysqlDescuento } from "../../../domain/repository/producto/MySQLDescuento";
+import { MysqlDescuento } from "../../../domain/producto/MySQLDescuento";
 import Database from "../database";
 
 

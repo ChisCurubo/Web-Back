@@ -1,6 +1,6 @@
 import CategoriaRepoInterface from "../../../domain/repository/CategoriaRepoInterface";
-import { MysqlCategoria } from "../../../domain/repository/producto/MySQLCategoria";
-import { MysqlTipoProducto } from "../../../domain/repository/producto/MySQLTipoProducto";
+import { MysqlCategoria } from "../../../domain/producto/MySQLCategoria";
+import { MysqlTipoProducto } from "../../../domain/producto/MySQLTipoProducto";
 import Database from "../database";
 
 

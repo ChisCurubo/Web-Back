@@ -1,5 +1,5 @@
 import RouterExpressInterface from "../../../../express/domain/RouterExpressInterface"
-import MovieUseCase from "../../../application/usecase/MovieUseCase"
+import MovieUseCase from "../../../application/usecase/CarritoUseCase"
 import MovieUseCaseById from "../../../application/usecase/MovieUseCaseByid"
 import MovieControllerExpress from "../controller/CarritoControllerExpress"
 import MovieRouterExpress from "../router/CarritoRouterExpress"

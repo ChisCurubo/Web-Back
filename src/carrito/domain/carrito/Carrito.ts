@@ -11,7 +11,6 @@ export class Carrito extends AbstractCarrito {
       statusCarrito: ${this.statusCarrito},
       carritoProducto: ${this.carritoProducto ? this.carritoProducto.toString() : "null"},
       totalCarrito: ${this.totalCarrito},
-      fechaCarrito: ${this.fechaCarrito.toISOString()}
     }`;
   }
 

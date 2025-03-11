@@ -1,5 +1,5 @@
-import { MysqlCategoria } from "./producto/MySQLCategoria";
-import { MysqlTipoProducto } from "./producto/MySQLTipoProducto";
+import { MysqlCategoria } from "../producto/MySQLCategoria";
+import { MysqlTipoProducto } from "../producto/MySQLTipoProducto";
 
 export default interface CategoriaRepoInterface {
     fetchCategorias(): Promise<MysqlCategoria[]>;

@@ -1,20 +1,23 @@
 
+import AbstractUsuario from "../../../../usuario/domain/usuario/AbstractTypes/AbstractUsuario";
 import { Carrito } from "../interface/CarritoInterface";
-import AbstractCarritoProducto from "./AbstractCarritoProducto";
+import AbstractCarritoProducto from "./AbstraItemCarrito";
 
 export default abstract class AbstractCarrito {
   protected idCarrito: number;
   protected statusCarrito: boolean;
   protected carritoProducto: AbstractCarritoProducto;
+  protected usuario : AbstractUsuario
   protected totalCarrito: number;
-  protected fechaCarrito: Date;
+
 
   constructor(carritoAttributes: Carrito) {
     this.idCarrito = carritoAttributes.idCarrito;
     this.statusCarrito = carritoAttributes.statusCarrito;
+    this.usuario = carritoAttributes.usuario;
     this.totalCarrito =carritoAttributes.totalCarrito;
     this.carritoProducto = carritoAttributes.carritoProducto;
-    this.fechaCarrito =carritoAttributes.fechaCarrito;
+
   }
 
   public abstract isNull: () => boolean;
@@ -38,10 +41,10 @@ export default abstract class AbstractCarrito {
   public getTotalCarrito(): number {
     return this.totalCarrito;
   }
-
-  public getFechaCarrito(): Date {
-    return this.fechaCarrito;
+  public getUsuario(): AbstractUsuario {
+    return this.usuario;
   }
+
 
   //Setters con validaciones --------------------------------
   public setIdCarrito(id: number): void {
@@ -49,6 +52,9 @@ export default abstract class AbstractCarrito {
       return
     }
     this.idCarrito = id;
+  }
+  public setUsuario(usuario: AbstractUsuario): void {
+    this.usuario = usuario;
   }
 
   public setStatusCarrito(status: boolean): void {
@@ -66,18 +72,11 @@ export default abstract class AbstractCarrito {
     this.totalCarrito = (total);
   }
 
-  public setFechaCarrito(fecha: Date): void {
-    if(this.validateDate(fecha)){
-      return
-    }
-    this.fechaCarrito = fecha;
-  }
 
   //Validación ---------------------------------------
   
   private readonly validateNumber = (value: number, min: number = 1): boolean => 
     value < min || isNaN(value);
   
-  private readonly validateDate = (value: Date): boolean => 
-    isNaN(value.getTime());
+
 }

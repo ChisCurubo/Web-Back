@@ -1,4 +1,4 @@
-import { MysqlTipoProducto } from "../../../mysql/domain/repository/producto/MySQLTipoProducto";
+import { MysqlTipoProducto } from "../../../mysql/domain/producto/MySQLTipoProducto";
 import { TipoProducto } from "../../domain/tipoProducto/TipoProducto";
 
 export default class MysqlTipoProductoToTipoProducto {
