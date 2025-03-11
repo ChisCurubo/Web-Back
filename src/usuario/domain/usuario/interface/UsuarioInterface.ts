@@ -1,4 +1,3 @@
-import AbstractRol from "../../../../auth/domain/roles/AbstractTypes/AbstractRol";
 
 export interface Usuario {
   ci: string;
@@ -7,5 +6,5 @@ export interface Usuario {
   correoUsuario: string;
   contrasenaUsuario: string;
   estadoUsuario: boolean;
-  rolUsuario: number;
+  rolUsuario: number ;
 }

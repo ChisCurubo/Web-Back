@@ -1,4 +1,5 @@
-import AbstractProducto from "../../producto/AbstractTypes/AbstractProducto";
+
+import AbstractProducto from "../../../../producto/domain/producto/AbstractTypes/AbstractProducto";
 import CarritoProducto from "../interface/CarritoProductoInterface";
 
 export default abstract class AbstractCarritoProducto {
