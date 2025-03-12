@@ -18,7 +18,6 @@ export default class ProductoRouterExpress implements ProductoRouterExpressInter
     this.routes();
   }
 
-
   public routes = (): void => {
     this.configureProducto();
     this.configureProductosById();
@@ -39,6 +38,8 @@ export default class ProductoRouterExpress implements ProductoRouterExpressInter
     this.configureTipoProductoById();
     this.configureAddProducto();
     this.configureUpdateProducto();
+    this.configureBusqueda();
+    this.configureFilter();
   };
 
   public configureProducto = (): void => {
@@ -116,4 +117,17 @@ export default class ProductoRouterExpress implements ProductoRouterExpressInter
   public configureUpdateProducto = (): void => {
     this.router.put('/producto/:id', this.productoController.updateProducto.bind(this.productoController));
   };
+    /**
+   * Configures the route for searching products by name or brand.
+   */
+    public configureBusqueda = (): void => {
+      this.router.get('/productos/busqueda/:busqueda', this.productoController.BusquedaProductos.bind(this.productoController));
+    };
+  
+    /**
+     * Configures the route for filtering products based on criteria.
+     */
+    public configureFilter = (): void => {
+      this.router.post('/productos/filtrar', this.productoController.filtrateProducts.bind(this.productoController));
+    };
 }

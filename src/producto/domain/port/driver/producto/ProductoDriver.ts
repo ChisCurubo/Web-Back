@@ -1,3 +1,4 @@
+import { FiltrarProducto } from "../../../producto/interface/FilterInterface"
 import { Producto } from "../../../producto/Producto"
 
 
@@ -10,4 +11,6 @@ export default interface ProductoDriverPort{
     getImgProducto(idProducto:string):Promise<string>
     addProducto(producto: Producto):Promise<boolean>
     updateProducto(id:number, producto: Producto):Promise<boolean>
+    filterProductos(filters: FiltrarProducto): Promise<Producto[]>
+    searchProductos(search:string):Promise<Producto[]>
 }

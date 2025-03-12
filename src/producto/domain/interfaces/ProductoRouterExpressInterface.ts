@@ -21,4 +21,6 @@ export default interface ProductoRouterExpressInterface
     configureAddTipoProducto: () => void;
     configureAddProducto: () => void;
     configureUpdateProducto: () => void;
+    configureBusqueda: () => void;
+    configureFilter: () => void;
 }

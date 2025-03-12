@@ -15,27 +15,53 @@ import UserRepositoryInfraestructure from "../../../../usuario/infrastructure/re
 import MysqlUsuarioRepository from "../../../../mysql/infrastructure/db/UsuarioSQL/MysqlUsuarioI";
 import JwtRepo from "../../../../jwt/infrastructure/tokken/JwtokenRepo";
 
+/**
+ * Factory class responsible for creating and wiring together all components
+ * required for the authentication module.
+ * 
+ * This factory implements the Factory Method pattern to encapsulate the creation
+ * logic of the authentication router and all its dependencies, including:
+ * - Data converters (between MySQL and domain entities)
+ * - Repositories (for authentication, users, etc.)
+ * - Services (for authentication and role/permission management)
+ * - Use cases (for business logic)
+ * - Controllers (for handling HTTP requests)
+ * - Routers (for defining API endpoints)
+ */
 export default class AuthRouterFactory {
+  /**
+   * Creates and configures a complete authentication router with all its dependencies.
+   * 
+   * This method implements the dependency injection pattern by:
+   * 1. Creating data converters for permissions, roles, and users
+   * 2. Instantiating repositories for authentication and users
+   * 3. Creating services that implement business logic
+   * 4. Creating use cases that orchestrate the application flow
+   * 5. Creating a controller to handle HTTP requests
+   * 6. Creating and returning a router with the configured controller
+   * 
+   * @returns {RouterExpressInterface} A fully configured Express router for authentication endpoints
+   */
   public static create(): RouterExpressInterface {
-    // Instanciar conversores
+    // Instantiate converters
     const permisoToPermiso = new MysqlPermisosToPermisos();
     const rolToRol = new MysqlRolesToRoles(permisoToPermiso);
     const usuarioToUsuario = new MysqlUsuariosToUsuarios();
-
-    // Instanciar repositorios
+    
+    // Instantiate repositories
     const mysqlAuthRepository = new MysqlAuthRepository();
     const bycriptInterface = new ByCriptRepo();
     const jwtRepo = new JwtRepo()
     const mysqlUsuario = new MysqlUsuarioRepository
     
-    // Crear el repositorio de usuario
+    // Create the user repository
     const usuarioRepo = new UserRepositoryInfraestructure(
-      mysqlUsuario, // Repositorio MySQL para usuarios
-      usuarioToUsuario,    // Conversor de usuarios
-      rolToRol             // Conversor de roles
+      mysqlUsuario, // MySQL repository for users
+      usuarioToUsuario,    // User converter
+      rolToRol             // Role converter
     );
     
-    // Crear el repositorio de autenticación
+    // Create the authentication repository
     const authRepository = new AuthRepositoryInfraestructure(
       mysqlAuthRepository, 
       usuarioToUsuario, 
@@ -43,19 +69,19 @@ export default class AuthRouterFactory {
       permisoToPermiso, 
       bycriptInterface
     );
-
-    // Crear los servicios
+    
+    // Create services
     const authService = new AuthService(authRepository, usuarioRepo);
     const authRolPermisoService = new AuthRolPermisoService(authRepository);
     
-    // Crear los casos de uso
+    // Create use cases
     const authRolesPermisoUseCase = new AuthRolesPermisoUseCase(authRolPermisoService);
     const authUseCase = new AuthUseCase(authService, jwtRepo);
-
-    // Crear el controlador
+    
+    // Create the controller
     const authController = new AuthControllerExpress(authUseCase, authRolesPermisoUseCase);
-
-    // Retornar el router
+    
+    // Return the router
     return new AuthRouterExpress(authController);
   }
 }

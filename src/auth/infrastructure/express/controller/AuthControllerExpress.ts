@@ -4,20 +4,38 @@ import AuthControllerExpressInterface from '../../../domain/interfaces/AuthContr
 import AuthRolesPermisoUseCase from '../../../application/usecase/AuthRolesPermisoUseCase';
 import AuthDriverPort from '../../../domain/port/driver/auth/AuthUsuario';
 
+/**
+ * Express controller implementation for authentication-related operations.
+ * This controller handles HTTP requests for user authentication, role management,
+ * and permission management through Express.js routes.
+ * 
+ * @implements {AuthControllerExpressInterface} Interface defining required controller methods
+ */
 export default class AuthControllerExpress
   implements AuthControllerExpressInterface {
 
+    /**
+     * Creates a new instance of AuthControllerExpress.
+     * 
+     * @param {AuthDriverPort} authUseCase - Use case for authentication operations
+     * @param {AuthRolesPermisoUseCase} authRolPermisoUsecase - Use case for role and permission operations
+     */
     constructor(
       private readonly authUseCase: AuthDriverPort,
       private readonly authRolPermisoUsecase: AuthRolesPermisoUseCase,
     ) {}
 
-  
+    /**
+     * Retrieves all roles from the system.
+     * 
+     * @param {Request} _req - Express request object (unused)
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public getRoles = async (_req: Request, res: Response): Promise<void> => {
       try {
         const roles = await this.authRolPermisoUsecase.getRoles();
        
-  
         if (roles === null || roles === undefined) {
           res.status(404).json({ message: "Roles not found" });
           return Promise.resolve();
@@ -29,6 +47,13 @@ export default class AuthControllerExpress
       }
     };
   
+    /**
+     * Retrieves all permissions associated with a token.
+     * 
+     * @param {Request} req - Express request object containing the token parameter
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public getPermisos = async (req: Request, res: Response): Promise<void> => {
       try {
         let token = req.params['token'];
@@ -50,7 +75,13 @@ export default class AuthControllerExpress
       }
     };
     
-
+    /**
+     * Adds a new role to the system.
+     * 
+     * @param {Request} req - Express request object containing the role data in the body
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public addRol = async (req: Request, res: Response): Promise<void> => {
       try {
         const rol = req.body;
@@ -65,6 +96,13 @@ export default class AuthControllerExpress
       }
     };
   
+    /**
+     * Adds a new permission to the system.
+     * 
+     * @param {Request} req - Express request object containing the permission data in the body
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public addPermiso = async (req: Request, res: Response): Promise<void> => {
       try {
         const permiso = req.body;
@@ -79,6 +117,13 @@ export default class AuthControllerExpress
       }
     };
   
+    /**
+     * Creates a new association between a role and a permission.
+     * 
+     * @param {Request} req - Express request object containing idRol and idPermiso in the body
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public addNewRelationRolPermiso = async (req: Request, res: Response): Promise<void> => {
       try {
         const { idRol, idPermiso } = req.body;
@@ -93,6 +138,13 @@ export default class AuthControllerExpress
       }
     };
   
+    /**
+     * Removes an association between a role and a permission.
+     * 
+     * @param {Request} req - Express request object containing idRol and idPermiso in the body
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public removeRelationRolPermiso = async (req: Request, res: Response): Promise<void> => {
       try {
         const { idRol, idPermiso } = req.body;
@@ -107,10 +159,13 @@ export default class AuthControllerExpress
       }
     };
 
-
-
-
-  
+    /**
+     * Authenticates a user and generates an access token.
+     * 
+     * @param {Request} req - Express request object containing email and password in the body
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public login = async (req: Request, res: Response): Promise<void> => {
       try {
         const { email, password } = req.body;
@@ -119,16 +174,22 @@ export default class AuthControllerExpress
 
         if (token === null || token === undefined) {
           res.status(401).json({ message: "Invalid credentials" });
-          return Promise.resolve();;
+          return Promise.resolve();
         }
     
-  
         res.status(200).json({ token });
       } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error });
       }
     };
   
+    /**
+     * Registers a new user in the system.
+     * 
+     * @param {Request} req - Express request object containing user data in the body
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public register = async (req: Request, res: Response): Promise<void> => {
       try {
         const userData = req.body;
@@ -145,6 +206,13 @@ export default class AuthControllerExpress
       }
     };
   
+    /**
+     * Extracts user information from an authentication token.
+     * 
+     * @param {Request} req - Express request object containing the token in the body
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public detokenize = async (req: Request, res: Response): Promise<void> => {
       try {
         const { token } = req.body;
@@ -161,6 +229,13 @@ export default class AuthControllerExpress
       }
     };
   
+    /**
+     * Invalidates a user's authentication token.
+     * 
+     * @param {Request} req - Express request object containing the token parameter
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public logout = async (req: Request, res: Response): Promise<void> => {
       try {
         let token = req.params['token'];
@@ -177,12 +252,19 @@ export default class AuthControllerExpress
       }
     };
       
+    /**
+     * Verifies if a token has the required permissions.
+     * 
+     * @param {Request} req - Express request object containing the token parameter
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public verifyPermitions = async (req: Request, res: Response): Promise<void> => {
       try {
         let token = req.params['token'];
     
         if (!token) {
-          token = "3"; // Si no hay token, usa "3" como ID por defecto
+          token = "3"; // Default token ID if none provided
         }
     
         const verify = await this.authUseCase.verifyPermitions(token);
@@ -192,6 +274,13 @@ export default class AuthControllerExpress
       }
     };
 
+    /**
+     * Changes the roles assigned to a user.
+     * 
+     * @param {Request} req - Express request object containing token, email, and nameRol in the body
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public changeUserRoles = async (req: Request, res: Response): Promise<void> => {
       try {
         const { token, email, nameRol } = req.body;
@@ -205,7 +294,4 @@ export default class AuthControllerExpress
         res.status(500).json({ message: "Internal Server Error", error });
       }
     };
-  
-
-  }
-  
+}

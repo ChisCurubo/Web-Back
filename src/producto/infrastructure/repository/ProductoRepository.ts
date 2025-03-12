@@ -1,5 +1,6 @@
 import ProductoRepoInterface from "../../../mysql/domain/repository/ProductoRepoInterface";
 import ProductoRepository from "../../domain/port/driven/ProductoRepositoryPort";
+import { FiltrarProducto } from "../../domain/producto/interface/FilterInterface";
 import NullProducto from "../../domain/producto/NullTypes/NullProducto";
 import { Producto } from "../../domain/producto/Producto";
 import MysqlProductosToProductos from "./ProductoToProducto";
@@ -11,6 +12,17 @@ export default class ProductoRepositoryInfraestructure implements ProductoReposi
         private readonly mysqlProductoRepo: ProductoRepoInterface,
         private readonly productoToProducto: MysqlProductosToProductos
     ) {}
+    async filterProductos(filters: FiltrarProducto): Promise<Producto[]> {
+        const fil = await this.productoToProducto.filterToMysqlFilter(filters)
+        const productos = await this.mysqlProductoRepo.filterProductos(fil)
+        const produ = await this.productoToProducto.getArray(productos)
+        return produ
+    }
+    async searchProductos(search: string): Promise<Producto[]> {
+        const productos = await this.mysqlProductoRepo.searchProductos(search)
+        const produ = await this.productoToProducto.getArray(productos)
+        return produ
+    }
     async getProductoByName(nombre: string): Promise<Producto[]> {
         const productos = await this.mysqlProductoRepo.fetchProductoByName(nombre);
         const produ =  await this.productoToProducto.getArray(productos)

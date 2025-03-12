@@ -1,8 +1,10 @@
+import { MySQLFiltrarProducto } from "../../../mysql/domain/producto/MySQLFilter";
 import { MysqlProducto } from "../../../mysql/domain/producto/MySQLProducto";
 import MysqlCategoriaRepository from "../../../mysql/infrastructure/db/ProductoSQL/MysqlCategoria";
 import MysqlDescuentoRepository from "../../../mysql/infrastructure/db/ProductoSQL/MysqlDescuento";
 import NullCategoria from "../../domain/categoria/NullTypes/NullCategoria";
 import NullDescuento from "../../domain/descuento/NullTypes/NullDescuento";
+import { FiltrarProducto } from "../../domain/producto/interface/FilterInterface";
 import { Producto } from "../../domain/producto/Producto";
 
 import CategoriaToCategoria from "./CategoriaToCategoria";
@@ -123,4 +125,14 @@ export default class MysqlProductosToProductos {
         });
         return Promise.all(productosTransformados);
       };
+
+      public filterToMysqlFilter (filter: FiltrarProducto): Promise<MySQLFiltrarProducto>{
+        const filterMysql = filter as MySQLFiltrarProducto
+        return Promise.resolve(filterMysql)
+      }
+
+      public mysqlfilterToFilter (filterMysql: MySQLFiltrarProducto): Promise<FiltrarProducto>{
+        const filter = filterMysql as FiltrarProducto
+        return Promise.resolve(filter)
+      }
 }
