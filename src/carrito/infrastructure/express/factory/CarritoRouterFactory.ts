@@ -38,11 +38,12 @@ export default class CarritoRouterFactory {
     const itemCarritoConverter = new ItemCarritoToItemCarrito(productoRepository);
 
     const carritoMysql = new MysqlCarritoRepository()
-    const carritoRepository = new CarritoRepository(carritoMysql, itemCarritoConverter);
     const jwt = new JwtRepo()
+    const carritoRepository = new CarritoRepository(carritoMysql, itemCarritoConverter,jwt);
+
 
     // Crear instancia del servicio
-    const carritoService = new CarritoService(carritoRepository, jwt);
+    const carritoService = new CarritoService(carritoRepository);
 
     // Crear instancias de los casos de uso
     const carritoUseCase = new CarritoUseCase(carritoService);

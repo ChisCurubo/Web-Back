@@ -18,7 +18,7 @@ import { FiltrarProducto } from '../../../domain/producto/interface/FilterInterf
  */
 export default class ProductoControllerExpress
   implements ProductoControllerExpressInterface, DescuentoControllerExpressInterface, CategoriaControllerExpressInterface {
-  
+
   /**
    * Creates a new instance of ProductoControllerExpress.
    * 
@@ -30,68 +30,69 @@ export default class ProductoControllerExpress
     private readonly productoUseCase: ProductoUseCasePort,
     private readonly descuentoUseCase: DescuentoUseCasePort,
     private readonly categoriaUseCase: CategoriaUseCasePort
-  ) {}
-/**
- * Searches for products by name or brand.
- * This endpoint collects search parameters and delegates the search operation to the use case.
- * 
- * @param {Request} req - Express request object containing search query
- * @param {Response} res - Express response object
- * @returns {Promise<void>} Promise that resolves when the response is sent
- */
-public BusquedaProductos = async (req: Request, res: Response): Promise<void> => {
-  try {
-    // Extract search query from request
-    const query = req.params['busqueda'] as string;
-    
-    // Validate input
-    if (!query || query.trim() === '') {
-      res.status(400).json({ message: 'Search query is required' });
-      return;
-    }
-    
-    // Delegate to use case
-    const searchResults = await this.productoUseCase.searchProductos(query);
-    if(searchResults === null || searchResults === undefined){
-      res.status(401).json({ message: 'Items not found' });
-      return;
-    }
-    // Return results
-    res.status(200).json({ searchResults});
-  } catch (error) {
-    console.error('Error in BusquedaProductos:', error);
-    const err = new Error()
-    res.status(500).json({ message: 'Internal Server Error', error: err.message });
-  }
-};
+  ) { }
 
-/**
- * Filters products based on specified criteria.
- * This endpoint collects filter criteria and delegates the filtering operation to the use case.
- * 
- * @param {Request} req - Express request object containing filter criteria
- * @param {Response} res - Express response object
- * @returns {Promise<void>} Promise that resolves when the response is sent
- */
-public filtrateProducts = async (req: Request, res: Response): Promise<void> => {
-  try {
-    // Extract filter criteria from request body
-    const filterCriteria = req.body as FiltrarProducto;
-    
-    // Delegate to use case
-    const filterResults = await this.productoUseCase.filterProductos(filterCriteria);
-    if(filterResults === null || filterResults === undefined){
-      res.status(401).json({ message: 'Items not found' });
-      return;
+  /**
+   * Searches for products by name or brand.
+   * This endpoint collects search parameters and delegates the search operation to the use case.
+   * 
+   * @param {Request} req - Express request object containing search query
+   * @param {Response} res - Express response object
+   * @returns {Promise<void>} Promise that resolves when the response is sent
+   */
+  public BusquedaProductos = async (req: Request, res: Response): Promise<void> => {
+    try {
+      // Extract search query from request
+      const query = req.params['busqueda'] as string;
+
+      // Validate input
+      if (!query || query.trim() === '') {
+        res.status(400).json({ message: 'Search query is required' });
+        return;
+      }
+
+      // Delegate to use case
+      const searchResults = await this.productoUseCase.searchProductos(query);
+      if (searchResults === null || searchResults === undefined) {
+        res.status(401).json({ message: 'Items not found' });
+        return;
+      }
+      // Return results
+      res.status(200).json({ searchResults });
+    } catch (error) {
+      console.error('Error in BusquedaProductos:', error);
+      const err = new Error()
+      res.status(500).json({ message: 'Internal Server Error', error: err.message });
     }
-    // Return results
-    res.status(200).json({ filterResults });
-  } catch (error) {
-    console.error('Error in filtrateProducts:', error);
-    const err = new Error()
-    res.status(500).json({ message: 'Internal Server Error', error: err.message });
-  }
-};
+  };
+
+  /**
+   * Filters products based on specified criteria.
+   * This endpoint collects filter criteria and delegates the filtering operation to the use case.
+   * 
+   * @param {Request} req - Express request object containing filter criteria
+   * @param {Response} res - Express response object
+   * @returns {Promise<void>} Promise that resolves when the response is sent
+   */
+  public filtrateProducts = async (req: Request, res: Response): Promise<void> => {
+    try {
+      // Extract filter criteria from request body
+      const filterCriteria = req.body as FiltrarProducto;
+
+      // Delegate to use case
+      const filterResults = await this.productoUseCase.filterProductos(filterCriteria);
+      if (filterResults === null || filterResults === undefined) {
+        res.status(401).json({ message: 'Items not found' });
+        return;
+      }
+      // Return results
+      res.status(200).json({ filterResults });
+    } catch (error) {
+      console.error('Error in filtrateProducts:', error);
+      const err = new Error()
+      res.status(500).json({ message: 'Internal Server Error', error: err.message });
+    }
+  };
 
   /**
    * Retrieves all products from the system.
@@ -100,7 +101,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getProductos = async(_req: Request, res: Response): Promise<void> => {
+  public getProductos = async (_req: Request, res: Response): Promise<void> => {
     const productos = await this.productoUseCase.getAllProductos();
     res.status(200).json({ productos });
   };
@@ -114,11 +115,11 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    */
   public getProductosById = async (req: Request, res: Response): Promise<void> => {
     const id = Number(req.params['id']);
-    if (!id)  res.status(400).json({ message: 'Invalid ID' });
-    
+    if (!id) res.status(400).json({ message: 'Invalid ID' });
+
     const producto = await this.productoUseCase.getProductoById(id);
-    if (!producto)  res.status(404).json({ message: 'Producto not found' });
-    
+    if (!producto) res.status(404).json({ message: 'Producto not found' });
+
     res.status(200).json({ producto });
   };
 
@@ -129,13 +130,13 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getProductosByMarca = async (req: Request, res: Response): Promise<void>=> {
+  public getProductosByMarca = async (req: Request, res: Response): Promise<void> => {
     const marca = req.params['marca'];
     if (!marca) {
       res.status(400).json({ message: 'Invalid marca' });
       return;
     }
-    
+
     const productos = await this.productoUseCase.getProductoByMarca(marca);
     res.status(200).json({ productos });
   };
@@ -147,10 +148,10 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getProductosByNombre = async(req: Request, res: Response): Promise<void> => {
+  public getProductosByNombre = async (req: Request, res: Response): Promise<void> => {
     const nombre = req.params['nombre'];
-    if (!nombre)  res.status(400).json({ message: 'Invalid nombre' });
-    
+    if (!nombre) res.status(400).json({ message: 'Invalid nombre' });
+
     if (!nombre) {
       res.status(400).json({ message: 'Invalid nombre' });
       return;
@@ -166,10 +167,10 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getImageProducto = async(req: Request, res: Response): Promise<void> => {
+  public getImageProducto = async (req: Request, res: Response): Promise<void> => {
     const id = Number(req.params['id']);
-    if (!id)  res.status(400).json({ message: 'Invalid ID' });
-    
+    if (!id) res.status(400).json({ message: 'Invalid ID' });
+
     const imagen = await this.productoUseCase.getImgProducto(id.toString());
     res.status(200).json({ imagen });
   };
@@ -181,7 +182,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getDescuentos = async(_req: Request, res: Response): Promise<void> => {
+  public getDescuentos = async (_req: Request, res: Response): Promise<void> => {
     const descuentos = await this.descuentoUseCase.getDescuentos();
     res.status(200).json({ descuentos });
   };
@@ -195,8 +196,8 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    */
   public getDescuentoById = async (req: Request, res: Response): Promise<void> => {
     const id = Number(req.params['id']);
-    if (!id)  res.status(400).json({ message: 'Invalid ID' });
-    
+    if (!id) res.status(400).json({ message: 'Invalid ID' });
+
     const descuento = await this.descuentoUseCase.getDescuentoById(id);
     res.status(200).json({ descuento });
   };
@@ -210,8 +211,8 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    */
   public getDescuentoByNombre = async (req: Request, res: Response): Promise<void> => {
     const nombre = req.params['nombre'];
-    if (!nombre)  res.status(400).json({ message: 'Invalid nombre' });
-    
+    if (!nombre) res.status(400).json({ message: 'Invalid nombre' });
+
     const descuento = await this.descuentoUseCase.getDescuentoByNombre(nombre as string);
     res.status(200).json({ descuento });
   };
@@ -223,7 +224,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public addDescuento = async(req: Request, res: Response): Promise<void> => {
+  public addDescuento = async (req: Request, res: Response): Promise<void> => {
     const descuento = req.body;
     this.descuentoUseCase.addDescuento(descuento);
     res.status(201).json({ message: 'Descuento added' });
@@ -238,11 +239,11 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    */
   public updateDescuento = async (req: Request, res: Response): Promise<void> => {
     const id = Number(req.params['id']);
-    if (!id)  res.status(400).json({ message: 'Invalid ID' });
-    
+    if (!id) res.status(400).json({ message: 'Invalid ID' });
+
     const descuento = req.body;
-    const boDescuento= await this.descuentoUseCase.updateDescuento(id, descuento);
-    if(boDescuento=== false){
+    const boDescuento = await this.descuentoUseCase.updateDescuento(id, descuento);
+    if (boDescuento === false) {
       res.status(400).json({ message: 'Descuento not updated' });
     }
     res.status(200).json({ message: 'Descuento updated' });
@@ -255,7 +256,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getCategorias = async(_req: Request, res: Response): Promise<void> => {
+  public getCategorias = async (_req: Request, res: Response): Promise<void> => {
     const categorias = await this.categoriaUseCase.getCategorias();
     res.status(200).json({ categorias });
   };
@@ -267,10 +268,10 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getCategoriasById = async(req: Request, res: Response): Promise<void> => {
+  public getCategoriasById = async (req: Request, res: Response): Promise<void> => {
     const id = Number(req.params['id']);
-    if (!id)  res.status(400).json({ message: 'Invalid ID' });
-    
+    if (!id) res.status(400).json({ message: 'Invalid ID' });
+
     const categoria = await this.categoriaUseCase.getCategoriasById(id);
     res.status(200).json({ categoria });
   };
@@ -282,10 +283,10 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getCategoriasByNombre = async(req: Request, res: Response): Promise<void> => {
+  public getCategoriasByNombre = async (req: Request, res: Response): Promise<void> => {
     const nombre = req.params['nombre'];
-    if (!nombre)  res.status(400).json({ message: 'Invalid nombre' });
-    
+    if (!nombre) res.status(400).json({ message: 'Invalid nombre' });
+
     const categoria = await this.categoriaUseCase.getCategoriasByNombre(nombre as string);
     res.status(200).json({ categoria });
   };
@@ -297,7 +298,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public addCategoria = async(req: Request, res: Response): Promise<void> => {
+  public addCategoria = async (req: Request, res: Response): Promise<void> => {
     const categoria = req.body;
     await this.categoriaUseCase.addCategoria(categoria);
     res.status(201).json({ message: 'Categoria added' });
@@ -310,7 +311,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public addTipoProducto = async(req: Request, res: Response): Promise<void> => {
+  public addTipoProducto = async (req: Request, res: Response): Promise<void> => {
     const tipoProducto = req.body;
     await this.categoriaUseCase.addTipoProducto(tipoProducto);
     res.status(201).json({ message: 'Tipo de producto added' });
@@ -323,7 +324,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getTipoProductos = async(_req: Request, res: Response): Promise<void> => {
+  public getTipoProductos = async (_req: Request, res: Response): Promise<void> => {
     const tiposProductos = await this.categoriaUseCase.getTipoProductos();
     res.status(200).json({ tiposProductos });
   };
@@ -335,7 +336,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
    * @param {Response} res - Express response object
    * @returns {Promise<void>} Promise that resolves when the response is sent
    */
-  public getTipoProductoById = async(req: Request, res: Response): Promise<void> => {
+  public getTipoProductoById = async (req: Request, res: Response): Promise<void> => {
     const id = req.params['id'];
     const tipoProducto = await this.categoriaUseCase.getTipoProductoById(Number(id));
     res.status(200).json({ tipoProducto });
@@ -354,7 +355,7 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
       const success = await this.productoUseCase.addProducto(producto);
       res.status(success ? 201 : 400).json({ message: success ? 'Producto agregado' : 'Error al agregar producto' });
     } catch (error) {
-      res.status(500).json({ error: 'error del servidor'});
+      res.status(500).json({ error: 'error del servidor' });
     }
   };
 
@@ -377,7 +378,33 @@ public filtrateProducts = async (req: Request, res: Response): Promise<void> => 
       const success = await this.productoUseCase.updateProducto(id, producto);
       res.status(success ? 200 : 400).json({ message: success ? 'Producto actualizado' : 'Error al actualizar producto' });
     } catch (error) {
-      res.status(500).json({ error: 'error del servidor'});
+      res.status(500).json({ error: 'error del servidor' });
+    }
+  };
+
+  /**
+   * Retrieves featured products for the storefront display (vitrina).
+   * 
+   * @param {Request} req - Express request object
+   * @param {Response} res - Express response object
+   * @returns {Promise<void>} Promise that resolves when the response is sent
+   */
+  public getProductosVitrina = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const vitrina = req.params['vitrina']
+      const vitri = Number(vitrina)
+      // Obtener productos destacados o filtrados para la vitrina
+      const productosVitrina = await this.productoUseCase.getProductosVitrina(vitri);
+
+      if (!productosVitrina || productosVitrina.length === 0) {
+        res.status(404).json({ message: 'No se encontraron productos para la vitrina' });
+        return;
+      }
+
+      res.status(200).json({ productos: productosVitrina });
+    } catch (error) {
+      console.error('Error en getProductosVitrina:', error);
+      res.status(500).json({ message: 'Error interno del servidor', error: 'error de servidor' });
     }
   };
 }

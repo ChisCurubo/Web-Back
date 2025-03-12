@@ -8,19 +8,7 @@ import Database from "../database";
 export default class MysqlAuthRepository implements AuthRepoInterface {
     private readonly db = Database.getInstance();
   
-    //TODO todo lo del token
-    public async login(usuario: string, pwd: string): Promise<string> {
-      const rows = await this.db.executeQuery(
-        `SELECT ci FROM BuenaVista_Usuarios WHERE correoUsuario = ? AND contrasenaUsuario = ? AND estadoUsuario = 1`,
-        [usuario, pwd]
-      );
-  
-      if (!rows || rows.length === 0) {
-        throw new Error("Credenciales incorrectas o usuario inactivo.");
-      }
-  
-      return "TOKEN_GENERADO_AQUI"; // Aquí generas un token de autenticación
-    }
+
   
     public async register(usuario: MysqlUsuario): Promise<boolean> {
       try {
@@ -61,11 +49,7 @@ export default class MysqlAuthRepository implements AuthRepoInterface {
       // Aquí puedes implementar la invalidación del token
       return true;
     }
-  
-    public async detokenize(_token: string): Promise<MysqlUsuario> {
-      // Decodificar el token y obtener el usuario
-      throw new Error("Method not implemented.");
-    }
+
   
     public async verifyPermitions(_token: string): Promise<boolean> {
       // Verificar permisos del usuario a partir del token
@@ -98,10 +82,23 @@ export default class MysqlAuthRepository implements AuthRepoInterface {
       return rows as MysqlRol[];
     }
   
-    public async getPermiso(_token: string): Promise<MysqlPermiso[]> {
-      // Obtener permisos asociados a un usuario por su token
-      throw new Error("Method not implemented.");
+    public async getPermiso(ci: string): Promise<MysqlPermiso[]> {
+      try {
+        const permisos = await this.db.executeQuery(
+          `SELECT p.* FROM BuenaVista_Permisos p
+           JOIN BuenaVista_Roles_Permisos rp ON p.idPermiso = rp.idPermisos
+           JOIN BuenaVista_Usuarios u ON rp.idRol = u.rol_id
+           WHERE u.ci = ?`,
+          [ci]
+        );
+    
+        return permisos as MysqlPermiso[];
+      } catch (error) {
+        console.error("Error al obtener permisos del usuario:", error);
+        throw new Error("No se pudieron recuperar los permisos del usuario.");
+      }
     }
+    
   
     public async addRol(rol: MysqlRol): Promise<boolean> {
       const result = await this.db.executeQuery(

@@ -28,5 +28,5 @@ export default interface JwtInterface {
      * @param {string} token - The JWT string to decode.
      * @returns {JWTUser} - The decoded payload.
      */
-    decodeToken(token: string): JWTUser;
+    decodeToken(token: string): Promise<JWTUser>;
 }

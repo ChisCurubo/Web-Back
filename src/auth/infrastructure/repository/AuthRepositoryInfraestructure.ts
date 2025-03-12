@@ -9,6 +9,7 @@ import MysqlUsuariosToUsuarios from '../../../usuario/infrastructure/repository/
 import MysqlRolesToRoles from './RolToRol';
 import MysqlPermisosToPermisos from './PermisoToPermiso';
 import BycriptInterface from '../../../bycrypt/domain/interfaces/BycriptInterface';
+import JwtInterface from '../../../jwt/domain/interfaces/JwtokenInterface';
 
 /**
  * Implementation of the authentication repository interfaces.
@@ -30,10 +31,19 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
     constructor(
         private readonly mysqlUsuario: AuthRepoInterface,
         private readonly usuarioToUsuario: MysqlUsuariosToUsuarios,
-        private readonly rolesToRoles : MysqlRolesToRoles,
-        private readonly permisotopermiso : MysqlPermisosToPermisos,
-        private readonly bycriptInterface : BycriptInterface
-    ) {}
+        private readonly rolesToRoles: MysqlRolesToRoles,
+        private readonly permisotopermiso: MysqlPermisosToPermisos,
+        private readonly bycriptInterface: BycriptInterface,
+        private readonly jwt: JwtInterface
+    ) { }
+    async login(ci: string, email: string, idRol: number): Promise<string> {
+        const token = this.jwt.generateToken({
+            ci: ci,
+            email: email,
+            idRol: idRol
+        });
+        return token
+    }
 
     /**
      * Compares a plain text password with a hashed password.
@@ -44,16 +54,8 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
     async comparePasswords(password: string, hashedPassword: string): Promise<boolean> {
         return Promise.resolve(await this.bycriptInterface.comparetPwd(password, hashedPassword));
     }
-   
-    /**
-     * Authenticates a user and generates an access token.
-     * @param {string} usuario - The username or email
-     * @param {string} pwd - The user's password
-     * @returns {Promise<string>} The authentication token
-     */
-    async login(usuario: string, pwd: string): Promise<string> {
-        return await this.mysqlUsuario.login(usuario, pwd);
-    }
+
+
 
     /**
      * Registers a new user in the system.
@@ -61,8 +63,9 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
      * @returns {Promise<boolean>} True if registration was successful, false otherwise
      */
     async register(usuario: Usuario): Promise<boolean> {
-      const user = await this.usuarioToUsuario.teg(usuario)
-      return await this.mysqlUsuario.register(user);
+        const user = await this.usuarioToUsuario.teg(usuario)
+        console.log(user)
+        return await this.mysqlUsuario.register(user);
     }
 
     /**
@@ -80,8 +83,8 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
      * @returns {Promise<Usuario>} The user domain object associated with the token
      */
     async detokenize(token: string): Promise<Usuario> {
-        const usuario = await this.mysqlUsuario.detokenize(token);
-        const user = await this.usuarioToUsuario.get(usuario)
+        const usuario = await this.jwt.decodeToken(token);
+        const user = await this.usuarioToUsuario.fromJWTUserToUsuario(usuario)
         return user;
     }
 
@@ -121,7 +124,8 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
      * @returns {Promise<Permiso[]>} Array of permission domain objects
      */
     async getPermiso(token: string): Promise<Permiso[]> {
-        const permisos = await this.mysqlUsuario.getPermiso(token);
+        const decoded=  await this.detokenize(token);
+        const permisos = await this.mysqlUsuario.getPermiso(decoded.getCi());
         const permi = await this.permisotopermiso.getArray(permisos)
         return permi
     }
@@ -132,7 +136,7 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
      * @returns {Promise<boolean>} True if the role was successfully added, false otherwise
      */
     async addRol(rol: Rol): Promise<boolean> {
-      const roli = await this.rolesToRoles.teg(rol)
+        const roli = await this.rolesToRoles.teg(rol)
         return await this.mysqlUsuario.addRol(roli);
     }
 
@@ -142,7 +146,7 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
      * @returns {Promise<boolean>} True if the permission was successfully added, false otherwise
      */
     async addPermiso(permiso: Permiso): Promise<boolean> {
-      const permi = await this.permisotopermiso.teg(permiso)
+        const permi = await this.permisotopermiso.teg(permiso)
         return await this.mysqlUsuario.addPermiso(permi);
     }
 

@@ -14,7 +14,8 @@ export default interface AuthServiceInterface {
      * @param {string} pwd - The password for authentication
      * @returns {Promise<Usuario>} A promise that resolves to the authenticated user domain object
      */
-    login(usuario: string, pwd: string): Promise<Usuario>;
+    login(usuario: string, pwd: string): Promise<{ usuario: Usuario; token: string }>;
+
     
     /**
      * Registers a new user in the system.

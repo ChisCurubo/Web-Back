@@ -1,4 +1,4 @@
-import JwtInterface from "../../../jwt/domain/interfaces/JwtokenInterface";
+
 import { Usuario } from "../../../usuario/domain/usuario/Usuario";
 import AuthServiceInterface from "../../domain/interfaces/AuthServiceInterface";
 import AuthDriverPort from "../../domain/port/driver/auth/AuthUsuario";
@@ -20,7 +20,7 @@ export default class AuthUseCase implements AuthDriverPort {
      */
     constructor(
         private readonly authService: AuthServiceInterface,
-        private readonly jwtToken: JwtInterface
+
     ) { }
 
     /**
@@ -38,15 +38,11 @@ export default class AuthUseCase implements AuthDriverPort {
         }
         const user = await this.authService.login(usuario, pwd);
         
-        if (user.isNull()) {
+        if (user.usuario.isNull()) {
             return "";
         }
-        const token = this.jwtToken.generateToken({
-            ci: user.getCi(),
-            email: user.getCorreoUsuario(),
-            idRol: user.getRolUsuario()
-        });
-        return token
+       
+        return user.token
     }
 
     /**

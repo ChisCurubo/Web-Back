@@ -6,9 +6,29 @@ import { Producto } from "../../domain/producto/Producto";
 
 
 export default class ProductoUseCase implements ProductoDriverPort {
+    private readonly numeroVitrina: number = 12
     constructor(
         private readonly productoService: ProductoServiceInterface
-    ) {}
+    ) { }
+    public async getProductosVitrina(vitrina: number): Promise<Producto[]> {
+        try {
+            // Validar que el ID de la vitrina sea un número válido
+            if (!vitrina || vitrina <= 0) {
+                throw new Error("ID de vitrina no válido");
+            }
+            // Obtener todos los productos
+            const productos = await this.getAllProductos();
+
+            const inicio = (vitrina - 1) * this.numeroVitrina;
+            const fin = vitrina * this.numeroVitrina;
+
+            return productos.slice(inicio, fin);
+        } catch (error) {
+            console.error('Error en getProductosVitrina:', error);
+            return [];
+        }
+    }
+
     /**
      * Filters products based on specified criteria.
      * This method delegates the filtering operation to the product service.
@@ -23,10 +43,10 @@ export default class ProductoUseCase implements ProductoDriverPort {
                 // If no filters provided, return all products
                 return await this.getAllProductos();
             }
-            
+
             // Delegate to service layer
             const productos = await this.productoService.filterProductos(filters);
-            
+
             // Return filtered products or empty array if null/undefined
             return productos || [];
         } catch (error) {
@@ -50,10 +70,10 @@ export default class ProductoUseCase implements ProductoDriverPort {
                 // If no search query provided, return all products
                 return await this.getAllProductos();
             }
-            
+
             // Delegate to service layer
             const productos = await this.productoService.searchProductos(search);
-            
+
             // Return search results or empty array if null/undefined
             return productos || [];
         } catch (error) {
@@ -73,7 +93,7 @@ export default class ProductoUseCase implements ProductoDriverPort {
     public async getAllProductos(): Promise<Producto[]> {
         const productos = await this.productoService.getAllProductos();
         console.log(productos)
-        return productos ;
+        return productos;
     }
 
     public async getProductoById(id: number): Promise<Producto> {
@@ -88,12 +108,12 @@ export default class ProductoUseCase implements ProductoDriverPort {
 
     public async getProductosByCategoria(categoria: string): Promise<Producto[]> {
         const productos = await this.productoService.getProductosByCategoria(categoria);
-        return productos ;
+        return productos;
     }
 
     public async getProductoByMarca(marca: string): Promise<Producto[]> {
         const productos = await this.productoService.getProductoByMarca(marca);
-        return productos ;
+        return productos;
     }
 
     public async getImgProducto(idProducto: string): Promise<string> {

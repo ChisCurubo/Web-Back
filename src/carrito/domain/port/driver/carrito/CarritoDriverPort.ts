@@ -1,10 +1,10 @@
 
-import { Carrito } from "../../../carrito/Carrito"
+import CarritoResumidoInterfazApi from "../../../api/CarritoResumido"
 import { ItemCarrito } from "../../../carrito/ItemCarrito"
 
 export default interface CarritoDriverPort{
     getCarrito(token:string):Promise<ItemCarrito[]>
-    getCarritoResumido(token:string):Promise<Carrito>
+    getCarritoResumido(token:string):Promise<CarritoResumidoInterfazApi>
     addProductoCarrito(token:string, producto:number):Promise<boolean>
     deleteProductoCarrito(token:string, producto:number):Promise<boolean>
     changeStatusCarrito(token:string):Promise<boolean>

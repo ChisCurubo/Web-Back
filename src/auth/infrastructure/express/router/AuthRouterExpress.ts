@@ -1,12 +1,16 @@
 import { Router } from 'express';
 import AuthRouterExpressInterface from '../../../domain/interfaces/AuthRouterExpressInterface';
 import AuthControllerExpressInterface from '../../../domain/interfaces/AuthControllerExpressInterface';
+import AuthMiddlewareInterface from '../middleware/AuthMiddlewareInterface';
 
 export default class AuthRouterExpress implements AuthRouterExpressInterface {
   router: Router;
   path: string;
 
-  constructor(private readonly authController: AuthControllerExpressInterface) {
+  constructor(
+    private readonly authController: AuthControllerExpressInterface,
+    private readonly authMiddleWare: AuthMiddlewareInterface
+  ) {
     this.router = Router();
     this.path = '/auth/v1.0';
     this.routes();
@@ -28,11 +32,21 @@ export default class AuthRouterExpress implements AuthRouterExpressInterface {
   };
 
   public configureRoles = (): void => {
-    this.router.get('/roles', this.authController.getRoles.bind(this.authController));
+    this.router.get(
+      '/roles',
+      this.authMiddleWare.isAuthenticated(),
+      this.authMiddleWare.hasPermission(['GetRoles']),
+      this.authController.getRoles.bind(this.authController)
+    );
   };
 
   public configurePermisos = (): void => {
-    this.router.get('/permisos/:token?', this.authController.getPermisos.bind(this.authController));
+    this.router.get(
+      '/permisos',
+      this.authMiddleWare.isAuthenticated(),
+      this.authMiddleWare.hasPermission(['GetPermisos']),
+      this.authController.getPermisos.bind(this.authController)
+    );
   };
 
   public configureLogin = (): void => {
@@ -40,38 +54,78 @@ export default class AuthRouterExpress implements AuthRouterExpressInterface {
   };
 
   public configureRegister = (): void => {
-    this.router.post('/register', this.authController.register.bind(this.authController));
+    this.router.post(
+      '/register',
+      this.authController.register.bind(this.authController)
+    );
   };
 
   public configureDetokenize = (): void => {
-    this.router.post('/detokenize', this.authController.detokenize.bind(this.authController));
+    this.router.post(
+      '/detokenize',
+      this.authController.detokenize.bind(this.authController)
+    );
   };
 
   public configureLogout = (): void => {
-    this.router.post('/logout/:token', this.authController.logout.bind(this.authController));
+    this.router.post(
+      '/logout',
+      this.authMiddleWare.isAuthenticated(),
+      this.authController.logout.bind(this.authController)
+    );
   };
 
   public configureVerifyPermitions = (): void => {
-    this.router.get('/verify/:token?', this.authController.verifyPermitions.bind(this.authController));
+    this.router.get(
+      '/verify',
+      this.authMiddleWare.isAuthenticated(),
+      this.authMiddleWare.hasPermission(['VerifyPermissions']),
+      this.authController.verifyPermitions.bind(this.authController)
+    );
   };
 
   public configureChangeUserRoles = (): void => {
-    this.router.post('/change-role', this.authController.changeUserRoles.bind(this.authController));
+    this.router.post(
+      '/change-role/update',
+      this.authMiddleWare.isAuthenticated(),
+      this.authMiddleWare.hasPermission(['ChangeUserRole']),
+      this.authController.changeUserRoles.bind(this.authController)
+    );
   };
 
   public configureAddRol = (): void => {
-    this.router.post('/roles', this.authController.addRol.bind(this.authController));
+    this.router.post(
+      '/roles/add',
+      this.authMiddleWare.isAuthenticated(),
+      this.authMiddleWare.hasPermission(['AddRole']),
+      this.authController.addRol.bind(this.authController)
+    );
   };
 
   public configureAddPermiso = (): void => {
-    this.router.post('/permisos', this.authController.addPermiso.bind(this.authController));
+    this.router.post(
+      '/permisos/create',
+      this.authMiddleWare.isAuthenticated(),
+      this.authMiddleWare.hasPermission(['AddPermission']),
+      this.authController.addPermiso.bind(this.authController)
+    );
   };
 
   public configureAddNewRelationRolPermiso = (): void => {
-    this.router.post('/roles-permisos', this.authController.addNewRelationRolPermiso.bind(this.authController));
+    this.router.post(
+      '/roles-permisos/create',
+      this.authMiddleWare.isAuthenticated(),
+      this.authMiddleWare.hasPermission(['AddRolePermission']),
+      this.authController.addNewRelationRolPermiso.bind(this.authController)
+    );
   };
 
   public configureRemoveRelationRolPermiso = (): void => {
-    this.router.delete('/roles-permisos', this.authController.removeRelationRolPermiso.bind(this.authController));
+    this.router.delete(
+      '/roles-permisos/remove',
+      this.authMiddleWare.isAuthenticated(),
+      this.authMiddleWare.hasPermission(['RemoveRolePermission']),
+      this.authController.removeRelationRolPermiso.bind(this.authController)
+    );
   };
 }

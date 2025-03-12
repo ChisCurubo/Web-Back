@@ -3,6 +3,9 @@ import AuthControllerExpressInterface from '../../../domain/interfaces/AuthContr
 
 import AuthRolesPermisoUseCase from '../../../application/usecase/AuthRolesPermisoUseCase';
 import AuthDriverPort from '../../../domain/port/driver/auth/AuthUsuario';
+import { Usuario as UsuarioIn } from '../../../../usuario/domain/usuario/interface/UsuarioInterface';
+import { Usuario } from '../../../../usuario/domain/usuario/Usuario';
+
 
 /**
  * Express controller implementation for authentication-related operations.
@@ -54,12 +57,23 @@ export default class AuthControllerExpress
      * @param {Response} res - Express response object
      * @returns {Promise<void>} Promise that resolves when the response is sent
      */
+
+    /**
+     * Retrieves all permissions associated with a token.
+     * If the token is missing or invalid, returns a 403 Forbidden status
+     * indicating insufficient permissions.
+     * 
+     * @param {Request} req - Express request object containing the user-id header
+     * @param {Response} res - Express response object
+     * @returns {Promise<void>} Promise that resolves when the response is sent
+     */
     public getPermisos = async (req: Request, res: Response): Promise<void> => {
       try {
-        let token = req.params['token'];
+        const token = req.headers['user-id'] as string;
     
-        if (!token) {
-          token = "3"; 
+        if (token === null || token === undefined) {
+          res.status(403).json({ message: "Insufficient permissions" });
+          return;
         }
     
         const permisos = await this.authRolPermisoUsecase.getPermisos(token);
@@ -74,6 +88,7 @@ export default class AuthControllerExpress
         res.status(500).json({ message: "Internal Server Error", error });
       }
     };
+
     
     /**
      * Adds a new role to the system.
@@ -84,6 +99,13 @@ export default class AuthControllerExpress
      */
     public addRol = async (req: Request, res: Response): Promise<void> => {
       try {
+        const token = req.headers['user-id'] as string;
+    
+        if (token === null || token === undefined) {
+          res.status(403).json({ message: "Insufficient permissions" });
+          return;
+        }
+
         const rol = req.body;
         const success = await this.authRolPermisoUsecase.addRol(rol);
         if (!success) {
@@ -105,6 +127,12 @@ export default class AuthControllerExpress
      */
     public addPermiso = async (req: Request, res: Response): Promise<void> => {
       try {
+        const token = req.headers['user-id'] as string;
+    
+        if (token === null || token === undefined) {
+          res.status(403).json({ message: "Insufficient permissions" });
+          return;
+        }
         const permiso = req.body;
         const success = await this.authRolPermisoUsecase.addPermiso(permiso);
         if (!success) {
@@ -126,6 +154,13 @@ export default class AuthControllerExpress
      */
     public addNewRelationRolPermiso = async (req: Request, res: Response): Promise<void> => {
       try {
+        const token = req.headers['user-id'] as string;
+    
+        if (token === null || token === undefined) {
+          res.status(403).json({ message: "Insufficient permissions" });
+          return;
+        }
+
         const { idRol, idPermiso } = req.body;
         const success = await this.authRolPermisoUsecase.addNewRelationRolPermiso(idRol, idPermiso);
         if (!success) {
@@ -147,6 +182,13 @@ export default class AuthControllerExpress
      */
     public removeRelationRolPermiso = async (req: Request, res: Response): Promise<void> => {
       try {
+        const token = req.headers['user-id'] as string;
+    
+        if (token === null || token === undefined) {
+          res.status(403).json({ message: "Insufficient permissions" });
+          return;
+        } 
+
         const { idRol, idPermiso } = req.body;
         const success = await this.authRolPermisoUsecase.removeRelationRolPermiso(idRol, idPermiso);
         if (!success) {
@@ -191,10 +233,16 @@ export default class AuthControllerExpress
      * @returns {Promise<void>} Promise that resolves when the response is sent
      */
     public register = async (req: Request, res: Response): Promise<void> => {
-      try {
-        const userData = req.body;
-        const user = await this.authUseCase.register(userData);
-  
+      try {     
+        const userData = req.body as UsuarioIn;
+        if(userData === null || userData === undefined){
+          res.status(400).json({ message: "Registration failed" });
+          return Promise.resolve();
+        }
+        const userObj= new Usuario(userData)
+
+        const user = await this.authUseCase.register(userObj);
+        console.log(user)
         if (user === null || user === undefined) {
           res.status(400).json({ message: "Registration failed" });
           return Promise.resolve();
@@ -215,15 +263,14 @@ export default class AuthControllerExpress
      */
     public detokenize = async (req: Request, res: Response): Promise<void> => {
       try {
-        const { token } = req.body;
-        const userData = await this.authUseCase.detokenize(token);
-  
-        if (userData === null || userData === undefined) {
-          res.status(401).json({ message: "Invalid token" });
-          return Promise.resolve();
+        const token = req.headers['user-id'] as string;
+    
+        if (token === null || token === undefined) {
+          res.status(403).json({ message: "Insufficient permissions" });
+          return;
         }
   
-        res.status(200).json({ userData });
+        res.status(200).json({  });
       } catch (error) {
         res.status(500).json({ message: "Internal Server Error", error });
       }
@@ -238,12 +285,13 @@ export default class AuthControllerExpress
      */
     public logout = async (req: Request, res: Response): Promise<void> => {
       try {
-        let token = req.params['token'];
+        const token = req.headers['user-id'] as string;
     
-        if (!token) {
+        if (token === null || token === undefined) {
           res.status(401).json({ message: "Invalid token" });
           return Promise.resolve();
         }
+    
     
         const logout = await this.authUseCase.logout(token);
         res.status(200).json({ message: "Logged out successfully", logout });
@@ -264,7 +312,7 @@ export default class AuthControllerExpress
         let token = req.params['token'];
     
         if (!token) {
-          token = "3"; // Default token ID if none provided
+          token = "3"; 
         }
     
         const verify = await this.authUseCase.verifyPermitions(token);

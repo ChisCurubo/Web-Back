@@ -5,6 +5,7 @@ export default interface ProductoRouterExpressInterface
     configureCategoria: () => void;
     configureDescuento: () => void;
     configureProducto: () => void;
+    configureProductoVitrina: () => void;
     configureProductosById: () => void;
     configureProductosByMarca: () => void;
     configureProductosByNombre: () => void;

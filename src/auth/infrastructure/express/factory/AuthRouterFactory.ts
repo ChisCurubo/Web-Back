@@ -14,6 +14,7 @@ import ByCriptRepo from "../../../../bycrypt/infrastructure/security/ByCriptRepo
 import UserRepositoryInfraestructure from "../../../../usuario/infrastructure/repository/UsuarioRepository";
 import MysqlUsuarioRepository from "../../../../mysql/infrastructure/db/UsuarioSQL/MysqlUsuarioI";
 import JwtRepo from "../../../../jwt/infrastructure/tokken/JwtokenRepo";
+import AuthMiddleware from "../middleware/AuthMiddleware";
 
 /**
  * Factory class responsible for creating and wiring together all components
@@ -67,7 +68,8 @@ export default class AuthRouterFactory {
       usuarioToUsuario, 
       rolToRol, 
       permisoToPermiso, 
-      bycriptInterface
+      bycriptInterface,
+      jwtRepo
     );
     
     // Create services
@@ -76,12 +78,15 @@ export default class AuthRouterFactory {
     
     // Create use cases
     const authRolesPermisoUseCase = new AuthRolesPermisoUseCase(authRolPermisoService);
-    const authUseCase = new AuthUseCase(authService, jwtRepo);
+    const authUseCase = new AuthUseCase(authService);
     
     // Create the controller
     const authController = new AuthControllerExpress(authUseCase, authRolesPermisoUseCase);
     
+    // Create the middleware
+    const authMiddleware = new AuthMiddleware(authUseCase,authRolesPermisoUseCase ); // Assuming AuthMiddleware is the correct class
+
     // Return the router
-    return new AuthRouterExpress(authController);
+    return new AuthRouterExpress(authController, authMiddleware);
   }
 }

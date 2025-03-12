@@ -5,6 +5,7 @@ import ControllerExpressInterface from '../../../express/domain/ControllerExpres
 export default interface ProductoControllerExpressInterface
   extends ControllerExpressInterface {
   getProductos: (req: Request, res: Response) => Promise<void>
+  getProductosVitrina: (req: Request, res: Response) => Promise<void>
   getProductosById: (req: Request, res: Response) => Promise<void>
   getProductosByMarca: (req: Request, res: Response) => Promise<void>
   getProductosByNombre: (req: Request, res: Response) => Promise<void>

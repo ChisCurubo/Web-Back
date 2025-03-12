@@ -58,7 +58,15 @@ export default class JwtRepo implements JwtInterface {
      * @param {string} token - The JWT string to decode.
      * @returns {JWTUser} - The decoded payload.
      */
-    public decodeToken(token: string): JWTUser {
-        return jwt.decode(token) as JWTUser;
+
+    public async decodeToken(token: string): Promise<JWTUser> {
+        const decoded = jwt.decode(token);
+
+        if (!decoded) {
+            return Promise.resolve({ ci: '', email: '', idRol: 0 }); // Retorna una interfaz vacía en caso de error
+        }
+
+        return Promise.resolve(decoded as JWTUser);
     }
+
 }

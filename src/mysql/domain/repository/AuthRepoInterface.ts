@@ -6,10 +6,8 @@ import { MysqlUsuario } from "../usuario/MySQLUsuario";
 
 export default interface AuthRepoInterface {
 
-    login(usuario: string, pwd: string): Promise<string>;
     register(usuario: MysqlUsuario): Promise<boolean>;
     logout(token: string): Promise<boolean>;
-    detokenize(token: string): Promise<MysqlUsuario>;
     verifyPermitions(token: string): Promise<boolean>;
     changeUserRoles(token: string, email: string, nameRol: string): Promise<boolean>;
     

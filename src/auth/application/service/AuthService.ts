@@ -34,19 +34,31 @@ export default class AuthService implements AuthServiceInterface {
    * @returns {Promise<Usuario>} A promise that resolves to the user domain object if authentication is successful,
    *                            or a NullUsuario if the user is not found or the password is incorrect
    */
-  async login(usuario: string, pwd: string): Promise<Usuario> {
+  async login(usuario: string, pwd: string): Promise<{ usuario: Usuario; token: string }> {
     const userData = await this.userRepository.getUsuarioByEmail(usuario)
-    
+
     if (userData === undefined || userData === null) {
-      return Promise.resolve(new NullUsuario());
+      return Promise.resolve({ usuario: new NullUsuario(), token: '' });
     }
 
-    const isPasswordCorrect = await this.authRepository.comparePasswords(pwd, userData.getContrasenaUsuario())
+    const isPasswordCorrect = await this.authRepository.comparePasswords(pwd, userData.getContrasenaUsuario());
+
     if (!isPasswordCorrect) {
-      return Promise.resolve(new NullUsuario());
+      return Promise.resolve({ usuario: new NullUsuario(), token: '' });
     }
-    return Promise.resolve(userData);
-  };
+    if (userData.getCi().length > 0 || userData.getCorreoUsuario().length > 0 || userData.getRolUsuario() > 0) {
+
+      const token = await this.authRepository.login(userData.getCi(), userData.getCorreoUsuario(), userData.getRolUsuario());
+
+      if (token === null || token === undefined) {
+        return Promise.resolve({ usuario: userData, token: '' });
+      }
+
+      return Promise.resolve({ usuario: userData, token: token });
+    }else{
+      return Promise.resolve({ usuario: new NullUsuario(), token: '' });
+    }
+  }
 
   /**
    * Registers a new user in the system.

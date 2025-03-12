@@ -41,6 +41,15 @@ export default class CarritoRouterExpress implements CarritoRouterExpressInterfa
       '/carrito',
       this.carritoController.getCarrito.bind(this.carritoController)
     )
+    /**
+     * GET /carritoResumido
+     * Retrieves the current user's shopping cart-resumed contents
+     */
+      this.router.get(
+        '/carritoResumido',
+        this.carritoController.getCarritoResumido.bind(this.carritoController)
+      )
+    
 
     /**
      * POST /carrito/create

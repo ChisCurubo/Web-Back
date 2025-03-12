@@ -14,7 +14,7 @@ export default interface AuthRepositoryInterface {
    * @param {string} pwd - The password for authentication
    * @returns {Promise<string>} A promise that resolves to the authentication token if successful
    */
-  login(usuario: string, pwd: string): Promise<string>;
+  login(ci: string, email: string, idRol: number): Promise<string>;
   
   /**
    * Registers a new user in the system.

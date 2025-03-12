@@ -40,6 +40,7 @@ export default class ProductoRouterExpress implements ProductoRouterExpressInter
     this.configureUpdateProducto();
     this.configureBusqueda();
     this.configureFilter();
+    this.configureProductoVitrina(); 
   };
 
   public configureProducto = (): void => {
@@ -63,51 +64,51 @@ export default class ProductoRouterExpress implements ProductoRouterExpressInter
   };
 
   public configureCategoria = (): void => {
-    this.router.get('/categorias', this.categoriaController.getCategorias.bind(this.productoController));
+    this.router.get('/categorias', this.categoriaController.getCategorias.bind(this.categoriaController));
   };
 
   public configureCategoriasById = (): void => {
-    this.router.get('/categoria/:id', this.categoriaController.getCategoriasById.bind(this.productoController));
+    this.router.get('/categoria/:id', this.categoriaController.getCategoriasById.bind(this.categoriaController));
   };
 
   public configureCategoriasByNombre = (): void => {
-    this.router.get('/categorias/nombre/:nombre', this.categoriaController.getCategoriasByNombre.bind(this.productoController));
+    this.router.get('/categorias/nombre/:nombre', this.categoriaController.getCategoriasByNombre.bind(this.categoriaController));
   };
 
   public configureAddCategoria = (): void => {
-    this.router.post('/categoria', this.categoriaController.addCategoria.bind(this.productoController));
+    this.router.post('/categoria', this.categoriaController.addCategoria.bind(this.categoriaController));
   };
 
   public configureAddTipoProducto = (): void => {
-    this.router.post('/tipo-producto', this.categoriaController.addTipoProducto.bind(this.productoController));
+    this.router.post('/tipo-producto', this.categoriaController.addTipoProducto.bind(this.categoriaController));
   };
 
   public configureDescuento = (): void => {
-    this.router.get('/descuentos', this.descuentoContoller.getDescuentos.bind(this.productoController));
+    this.router.get('/descuentos', this.descuentoContoller.getDescuentos.bind(this.descuentoContoller));
   };
 
   public configureDescuentoById = (): void => {
-    this.router.get('/descuento/:id', this.descuentoContoller.getDescuentoById.bind(this.productoController));
+    this.router.get('/descuento/:id', this.descuentoContoller.getDescuentoById.bind(this.descuentoContoller));
   };
 
   public configureDescuentoByNombre = (): void => {
-    this.router.get('/descuentos/nombre/:nombre', this.descuentoContoller.getDescuentoByNombre.bind(this.productoController));
+    this.router.get('/descuentos/nombre/:nombre', this.descuentoContoller.getDescuentoByNombre.bind(this.descuentoContoller));
   };
 
   public configureAddDescuento = (): void => {
-    this.router.post('/descuento', this.descuentoContoller.addDescuento.bind(this.productoController));
+    this.router.post('/descuento', this.descuentoContoller.addDescuento.bind(this.descuentoContoller));
   };
 
   public configureUpdateDescuento = (): void => {
-    this.router.put('/descuento', this.descuentoContoller.updateDescuento.bind(this.productoController));
+    this.router.put('/descuento', this.descuentoContoller.updateDescuento.bind(this.descuentoContoller));
   };
 
   public configureTipoProductos = (): void => {
-    this.router.get('/tipo-productos', this.categoriaController.getTipoProductos.bind(this.productoController));
+    this.router.get('/tipo-productos', this.categoriaController.getTipoProductos.bind(this.categoriaController));
   };
 
   public configureTipoProductoById = (): void => {
-    this.router.get('/tipo-producto/:id', this.categoriaController.getTipoProductoById.bind(this.productoController));
+    this.router.get('/tipo-producto/:id', this.categoriaController.getTipoProductoById.bind(this.categoriaController));
   };
 
   public configureAddProducto = (): void => {
@@ -117,17 +118,25 @@ export default class ProductoRouterExpress implements ProductoRouterExpressInter
   public configureUpdateProducto = (): void => {
     this.router.put('/producto/:id', this.productoController.updateProducto.bind(this.productoController));
   };
-    /**
+
+  /**
    * Configures the route for searching products by name or brand.
    */
-    public configureBusqueda = (): void => {
-      this.router.get('/productos/busqueda/:busqueda', this.productoController.BusquedaProductos.bind(this.productoController));
-    };
-  
-    /**
-     * Configures the route for filtering products based on criteria.
-     */
-    public configureFilter = (): void => {
-      this.router.post('/productos/filtrar', this.productoController.filtrateProducts.bind(this.productoController));
-    };
+  public configureBusqueda = (): void => {
+    this.router.get('/productos/busqueda/:busqueda', this.productoController.BusquedaProductos.bind(this.productoController));
+  };
+
+  /**
+   * Configures the route for filtering products based on criteria.
+   */
+  public configureFilter = (): void => {
+    this.router.post('/productos/filtrar', this.productoController.filtrateProducts.bind(this.productoController));
+  };
+
+  /**
+   * Configura la ruta de la vitrina de productos.
+   */
+  public configureProductoVitrina = (): void => {
+    this.router.get('/productos/vitrina/:vitrina', this.productoController.getProductosVitrina.bind(this.productoController));
+  };
 }

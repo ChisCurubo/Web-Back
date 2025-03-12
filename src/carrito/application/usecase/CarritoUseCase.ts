@@ -1,7 +1,8 @@
 
-import { Carrito } from "../../domain/carrito/Carrito";
+import CarritoResumidoInterfazApi from "../../domain/api/CarritoResumido";
+
 import { ItemCarrito } from "../../domain/carrito/ItemCarrito";
-import NullCarrito from "../../domain/carrito/NullTypes/NullCarrito";
+
 
 import CarritoServiceInterface from "../../domain/interfaces/CarritoServiceInterface";
 import CarritoDriverPort from "../../domain/port/driver/carrito/CarritoDriverPort";
@@ -10,8 +11,8 @@ export default class CarritoUseCase implements CarritoDriverPort {
 
 
   constructor(
-      private readonly carritoService: CarritoServiceInterface
-  ) {}
+    private readonly carritoService: CarritoServiceInterface
+  ) { }
 
   /**
    * Retrieves the full shopping cart for a user
@@ -33,16 +34,41 @@ export default class CarritoUseCase implements CarritoDriverPort {
    * @param token - User authentication token
    * @returns Promise with the summarized shopping cart
    */
-  async getCarritoResumido(_token: string): Promise<Carrito> {
+  async getCarritoResumido(token: string): Promise<CarritoResumidoInterfazApi> {
     try {
-      return new NullCarrito()
-     // TODO hacer la logica aca
+      const carrito = await this.carritoService.getCarrito(token);
+
+      // Verifica que el carrito no sea null o undefined
+      if (!carrito) {
+        throw new Error("El carrito está vacío o no se pudo obtener.");
+      }
+
+      const products = carrito.map((cartProduct) => {
+        return {
+          name: cartProduct.getIdProducto().getNombreProducto(),
+          quantity: cartProduct.getCantidad(),
+          subtotal: cartProduct.getIdProducto().getPrecioProducto() * cartProduct.getCantidad()
+        };
+      });
+
+      // Sumar todos los subtotales de los productos
+      const total = products.reduce((sum, cartProduct) => {
+        return sum + cartProduct.subtotal; // Asegúrate de que `getSubtotal()` existe
+      }, 0);
+
+      const carritoResumen: CarritoResumidoInterfazApi = {
+        products,
+        total,
+      };
+
+      return carritoResumen;
     } catch (error) {
-      console.error('Error in getCarritoResumido:', error);
+      console.error("Error in getCarritoResumido:", error);
       const err = error as Error;
       throw new Error(`Failed to retrieve cart summary: ${err.message}`);
     }
   }
+
 
   /**
    * Adds a product to the shopping cart
@@ -114,13 +140,13 @@ export default class CarritoUseCase implements CarritoDriverPort {
    */
   async getCarritoProducto(idCarritoProducto: number): Promise<ItemCarrito> {
     try {
-      return await this.carritoService.getCarritoProdcuto(idCarritoProducto); 
+      return await this.carritoService.getCarritoProdcuto(idCarritoProducto);
     } catch (error) {
       console.error('Error in getCarritoProducto:', error);
       throw new Error(`Failed to retrieve cart product: ${(error as Error).message}`);
     }
   }
-  
+
 
   /**
    * Creates a new shopping cart for a user
@@ -144,7 +170,7 @@ export default class CarritoUseCase implements CarritoDriverPort {
    */
   aumentaCanitadItemProductoCarrito = async (token: string, producto: number): Promise<boolean> => {
     try {
-      return await this.carritoService.aumentaCanitadItemProductoCarrito(token,producto);
+      return await this.carritoService.aumentaCanitadItemProductoCarrito(token, producto);
     } catch (error) {
       console.error('Error in aumentaCanitadItemProductoCarrito:', error);
       const err = error as Error;
@@ -159,7 +185,7 @@ export default class CarritoUseCase implements CarritoDriverPort {
    */
   disminuyeCantidadItemProductoCarrito = async (token: string, producto: number): Promise<boolean> => {
     try {
-      return await this.carritoService.disminuyeCantidadItemProductoCarrito(token,producto);
+      return await this.carritoService.disminuyeCantidadItemProductoCarrito(token, producto);
     } catch (error) {
       console.error('Error in disminuyeCantidadItemProductoCarrito:', error);
       const err = error as Error;
