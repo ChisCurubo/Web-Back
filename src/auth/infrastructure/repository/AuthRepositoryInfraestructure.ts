@@ -63,6 +63,7 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
      * @returns {Promise<boolean>} True if registration was successful, false otherwise
      */
     async register(usuario: Usuario): Promise<boolean> {
+        usuario.setContrasenaUsuario(await this.bycriptInterface.encyptPwd(usuario.getContrasenaUsuario()));
         const user = await this.usuarioToUsuario.teg(usuario)
         console.log(user)
         return await this.mysqlUsuario.register(user);
@@ -124,7 +125,7 @@ export default class AuthRepositoryInfraestructure implements AuthRepositoryInte
      * @returns {Promise<Permiso[]>} Array of permission domain objects
      */
     async getPermiso(token: string): Promise<Permiso[]> {
-        const decoded=  await this.detokenize(token);
+        const decoded = await this.detokenize(token);
         const permisos = await this.mysqlUsuario.getPermiso(decoded.getCi());
         const permi = await this.permisotopermiso.getArray(permisos)
         return permi

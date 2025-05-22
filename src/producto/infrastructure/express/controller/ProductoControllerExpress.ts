@@ -391,20 +391,26 @@ export default class ProductoControllerExpress
    */
   public getProductosVitrina = async (req: Request, res: Response): Promise<void> => {
     try {
-      const vitrina = req.params['vitrina']
-      const vitri = Number(vitrina)
-      // Obtener productos destacados o filtrados para la vitrina
-      const productosVitrina = await this.productoUseCase.getProductosVitrina(vitri);
+      const vitrinaParam = req.params['vitrina'];
+      const vitrina = Number(vitrinaParam);
 
-      if (!productosVitrina || productosVitrina.length === 0) {
+      if (isNaN(vitrina) || vitrina <= 0) {
+        res.status(400).json({ message: 'ID de vitrina no válido' });
+        return;
+      }
+
+      const { productos, total } = await this.productoUseCase.getProductosVitrina(vitrina);
+
+      if (!productos || productos.length === 0) {
         res.status(404).json({ message: 'No se encontraron productos para la vitrina' });
         return;
       }
 
-      res.status(200).json({ productos: productosVitrina });
+      res.status(200).json({ productos, productosTotales: total });
     } catch (error) {
       console.error('Error en getProductosVitrina:', error);
       res.status(500).json({ message: 'Error interno del servidor', error: 'error de servidor' });
     }
   };
+
 }

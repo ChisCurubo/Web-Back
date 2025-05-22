@@ -29,7 +29,7 @@ export default class FavoritoRouterExpress implements FavoritoRouterExpressInter
   }
 
   configureDeleteFavoritos = (): void => {
-    this.router.delete('/delfavoritos/:id', this.movieController.deleteFavoritoUse.bind(this.movieController))
+    this.router.delete('/delfavoritos', this.movieController.deleteFavoritoUse.bind(this.movieController))
   }
 
 

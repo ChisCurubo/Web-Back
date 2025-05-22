@@ -252,7 +252,8 @@ export default class CarritoControllerExpress
       }
 
       const { status } = req.body;
-      if (!status) {
+      console.log(status)
+      if (status === null || status === undefined) {
         res.status(400).json({ message: 'Status is required' });
         return;
       }

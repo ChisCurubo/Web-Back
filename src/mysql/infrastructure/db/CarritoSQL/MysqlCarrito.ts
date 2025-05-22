@@ -3,7 +3,7 @@ import CarritoRepoInterface from "../../../domain/repository/CarritoRepoInterfac
 
 import Database from "../database";
 
-export default class MysqlCarritoRepository implements CarritoRepoInterface{
+export default class MysqlCarritoRepository implements CarritoRepoInterface {
     private readonly db = Database.getInstance();
     async getCarrito(token: string): Promise<MYSQLItemCarrito[]> {
         try {
@@ -14,30 +14,44 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
                  WHERE bc.usuario_id = ? AND bc.estadoCarrito = 1`,
                 [token]
             );
-    
+
             console.log("Resultado de la consulta SQL:", JSON.stringify(result, null, 2));
-    
+
             if (!Array.isArray(result) || result.length === 0) {
                 console.warn("No se encontraron items en el carrito activo.");
                 return [];
             }
-    
+
             return result as MYSQLItemCarrito[];
         } catch (error) {
             console.error("Error al obtener los items del carrito:", error);
             return [];
         }
     }
-    
-    
+
+
 
     async addProductoCarrito(token: string, producto: number): Promise<boolean> {
         try {
             const result = await this.db.executeQuery(
-                `INSERT INTO itemCarrito (idCarrito, idProducto, cantidad, subTotal)
-                 VALUES ((SELECT idCarrito FROM BuenaVista_Carrito WHERE usuario_id = ? AND estadoCarrito = 1), ?, 1, 
-                 (SELECT precioProducto FROM BuenaVista_Productos WHERE idProducto = ?))`,
-                [token, producto, producto]
+                `
+            INSERT INTO itemCarrito (idCarrito, idProducto, cantidad, subTotal)
+            SELECT
+                c.idCarrito,
+                ?,
+                1,
+                p.precioProducto
+            FROM BuenaVista_Carrito c
+            JOIN BuenaVista_Productos p ON p.idProducto = ?
+            WHERE c.usuario_id = ? AND c.estadoCarrito = 1
+              AND NOT EXISTS (
+                SELECT 1
+                FROM itemCarrito ic
+                WHERE ic.idCarrito = c.idCarrito AND ic.idProducto = ?
+              )
+            LIMIT 1
+            `,
+                [producto, producto, token, producto]
             );
 
             return result.affectedRows > 0;
@@ -47,12 +61,13 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
         }
     }
 
+
     async deleteProductoCarrito(token: string, producto: number): Promise<boolean> {
         try {
             const result = await this.db.executeQuery(
                 `DELETE FROM itemCarrito WHERE idCarrito = 
                  (SELECT idCarrito FROM BuenaVista_Carrito WHERE usuario_id = ? AND estadoCarrito = 1)
-                 AND idProducto = ?`,
+                 AND idItem = ?`,
                 [token, producto]
             );
 
@@ -105,7 +120,7 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
                 return {
                     idItem: 0,
                     idProducto: 0,
-                    cantidad:0,
+                    cantidad: 0,
                     idCarrito: 0,
                     subTotal: 0
                 };
@@ -118,7 +133,7 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
             return {
                 idItem: 0,
                 idProducto: 0,
-                cantidad:0,
+                cantidad: 0,
                 idCarrito: 0,
                 subTotal: 0
             };
@@ -139,27 +154,39 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
         }
     }
 
-    async aumentaCanitadItemProductoCarrito(token: string, producto: number): Promise<boolean> {
+    async aumentaCanitadItemProductoCarrito(token: string, idItem: number): Promise<boolean> {
         try {
             const result = await this.db.executeQuery(
-                `UPDATE itemCarrito 
-                 SET cantidad = cantidad + 1, 
-                     subTotal = cantidad * (SELECT precioProducto FROM BuenaVista_Productos WHERE idProducto = ?)
-                 WHERE idCarrito = (SELECT idCarrito FROM BuenaVista_Carrito WHERE usuario_id = ? AND estadoCarrito = 1)
-                 AND idProducto = ?`,
-                [producto, token, producto]
+                `UPDATE itemCarrito AS ic
+                JOIN (
+                    SELECT 
+                        p.precioProducto,
+                        ic.idItem,
+                        ic.idCarrito
+                    FROM itemCarrito ic
+                    JOIN BuenaVista_Productos p ON ic.idProducto = p.idProducto
+                    JOIN BuenaVista_Carrito c ON ic.idCarrito = c.idCarrito
+                    WHERE ic.idItem = ? AND c.usuario_id = ? AND c.estadoCarrito = 1
+                ) AS sub ON ic.idItem = sub.idItem AND ic.idCarrito = sub.idCarrito
+                SET 
+                    ic.cantidad = ic.cantidad + 1,
+                    ic.subTotal = (ic.cantidad + 1) * sub.precioProducto;
+                `,
+                [idItem, token]
             );
 
             return result.affectedRows > 0;
         } catch (error) {
-            console.error("Error al aumentar la cantidad del producto en el carrito:", error);
+            console.error("Error al aumentar la cantidad del item en el carrito:", error);
             return false;
         }
     }
 
-    async disminuyeCantidadItemProductoCarrito(token: string, producto: number): Promise<boolean> {
+
+
+    async disminuyeCantidadItemProductoCarrito(token: string, idItem: number): Promise<boolean> {
         try {
-            const [carritoResult]: any = await this.db.executeQuery(
+            const carritoResult: any[] = await this.db.executeQuery(
                 `SELECT idCarrito FROM BuenaVista_Carrito WHERE usuario_id = ? AND estadoCarrito = 1`,
                 [token]
             );
@@ -169,40 +196,50 @@ export default class MysqlCarritoRepository implements CarritoRepoInterface{
                 return false;
             }
 
-            const idCarrito = carritoResult[0].idCarrito;
+            const idCarrito = carritoResult[0]["idCarrito"];
 
             const [cantidadResult]: any = await this.db.executeQuery(
-                `SELECT cantidad FROM itemCarrito WHERE idCarrito = ? AND idProducto = ?`,
-                [idCarrito, producto]
+                `SELECT cantidad FROM itemCarrito WHERE idCarrito = ? AND idItem = ?`,
+                [idCarrito, idItem]
             );
 
             if (!cantidadResult || cantidadResult.length === 0) {
-                console.warn("El producto no está en el carrito.");
+                console.warn("El item no está en el carrito.");
                 return false;
             }
-
-            const cantidadActual = cantidadResult[0].cantidad;
+            const cantidadActual = cantidadResult["cantidad"];
 
             if (cantidadActual === 1) {
                 const deleteResult = await this.db.executeQuery(
-                    `DELETE FROM itemCarrito WHERE idCarrito = ? AND idProducto = ?`,
-                    [idCarrito, producto]
+                    `DELETE FROM itemCarrito WHERE idCarrito = ? AND idItem = ?`,
+                    [idCarrito, idItem]
                 );
 
                 return deleteResult.affectedRows > 0;
             } else {
                 const updateResult = await this.db.executeQuery(
-                    `UPDATE itemCarrito 
-                     SET cantidad = cantidad - 1, 
-                         subTotal = (cantidad - 1) * (SELECT precioProducto FROM BuenaVista_Productos WHERE idProducto = ?) 
-                     WHERE idCarrito = ? AND idProducto = ?`,
-                    [producto, idCarrito, producto]
+                    `UPDATE itemCarrito AS ic
+                        JOIN (
+                            SELECT 
+                                p.precioProducto,
+                                ic.idItem,
+                                ic.idCarrito
+                            FROM itemCarrito ic
+                            JOIN BuenaVista_Productos p ON ic.idProducto = p.idProducto
+                            WHERE ic.idItem = ? AND ic.idCarrito = ?
+                        ) AS sub ON ic.idItem = sub.idItem AND ic.idCarrito = sub.idCarrito
+                        SET 
+                            ic.cantidad = ic.cantidad - 1,
+                            ic.subTotal = (ic.cantidad - 1) * sub.precioProducto;
+                        `,
+                    [idItem, idCarrito]
                 );
+
 
                 return updateResult.affectedRows > 0;
             }
         } catch (error) {
-            console.error("Error al disminuir la cantidad del producto en el carrito:", error);
+            console.error("Error al disminuir la cantidad del item en el carrito:", error);
             return false;
         }
     }

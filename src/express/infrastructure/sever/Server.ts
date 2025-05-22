@@ -5,6 +5,9 @@ import ErrorRouterExpressInterface from '../error/router/ErrorExpressRouter'
 import * as https from 'https';
 import * as fs from 'fs';
 import Database from '../../../mysql/infrastructure/db/database';
+import cors from 'cors';
+
+
 
 export default class Server {
   private readonly app: Application
@@ -28,6 +31,7 @@ export default class Server {
   public configure() {
     this.app.use(express.json())
     this.app.use(express.urlencoded({ extended: true }))
+    this.app.use(cors());
   }
 
   public async initDB() {

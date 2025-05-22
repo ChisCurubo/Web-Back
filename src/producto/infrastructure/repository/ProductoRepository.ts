@@ -50,6 +50,8 @@ export default class ProductoRepositoryInfraestructure implements ProductoReposi
     
     async findAll(): Promise<Producto[]> {
         const productos = await this.mysqlProductoRepo.fetchAllProductos();
+        console.log(productos)
+        console.log("productos")
         
         if (!productos || productos.length === 0) {
             console.log("No se encontraron productos en la base de datos");

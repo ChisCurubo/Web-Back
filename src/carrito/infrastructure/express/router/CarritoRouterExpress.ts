@@ -65,7 +65,7 @@ export default class CarritoRouterExpress implements CarritoRouterExpressInterfa
      * Adds a specific item to the shopping cart
      */
     this.router.post(
-      '/carrito/items/add/:itemId',
+      '/carrito/items/add',
       this.carritoController.addItemToCarrito.bind(this.carritoController)
     )
 
@@ -85,7 +85,7 @@ export default class CarritoRouterExpress implements CarritoRouterExpressInterfa
      */
     this.router.put(
       '/carrito/items/reduce/:itemId',
-      this.carritoController.deleteItemFromCarrito.bind(this.carritoController)
+      this.carritoController.disminuyeCantidadItemProductoCarrito.bind(this.carritoController)
     )
 
     /**

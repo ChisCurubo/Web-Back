@@ -10,7 +10,7 @@ export default class ProductoUseCase implements ProductoDriverPort {
     constructor(
         private readonly productoService: ProductoServiceInterface
     ) { }
-    public async getProductosVitrina(vitrina: number): Promise<Producto[]> {
+    public async getProductosVitrina(vitrina: number):Promise<{ productos: Producto[]; total: number }> {
         try {
             // Validar que el ID de la vitrina sea un número válido
             if (!vitrina || vitrina <= 0) {
@@ -22,10 +22,17 @@ export default class ProductoUseCase implements ProductoDriverPort {
             const inicio = (vitrina - 1) * this.numeroVitrina;
             const fin = vitrina * this.numeroVitrina;
 
-            return productos.slice(inicio, fin);
+            const productosVitrina = productos.slice(inicio, fin);
+            return {
+                productos: productosVitrina,
+                total: productos.length
+            };
         } catch (error) {
             console.error('Error en getProductosVitrina:', error);
-            return [];
+             return {
+                productos: [],
+                total: 0
+            };
         }
     }
 
