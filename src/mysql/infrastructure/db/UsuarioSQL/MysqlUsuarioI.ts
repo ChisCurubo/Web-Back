@@ -111,9 +111,11 @@ export default class MysqlUsuarioRepository implements UsuarioRepoInterface {
     if (!result || result.affectedRows === 0) {
       return false;
     }
-  
+    
     return true;
   };
+
+  
   
   public updateUsuario = async (ci: string, usuario: MysqlUsuario): Promise<boolean> => {
     const result = await this.db.executeQuery(

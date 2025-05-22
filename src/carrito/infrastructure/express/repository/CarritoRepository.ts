@@ -30,6 +30,10 @@ export default class CarritoRepository implements CarritoRepositoryInterface {
 
     async changeStatusCarrito(token: string): Promise<boolean> {
         const idUser = await this.jwtToken.decodeToken(token)
+        const crearCarritoNuevo = await this.mysqlCarritoRepo.createCarrito(idUser.ci);
+        if (!crearCarritoNuevo) {
+            return false;
+        }
         return await this.mysqlCarritoRepo.changeStatusCarrito(idUser.ci);
     }
 
